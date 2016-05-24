@@ -1,0 +1,11 @@
+Bundle-SymbolicName: com.liferay.portal.settings.authentication.iam.web
+Bundle-Version: 1.0.0
+Bundle-Name: Liferay Portal Settings Authentication IAM Web
+Bundle-Description: Liferay Portal Settings Authentication Web interface for INDIGO-DC IAM service. \
+	This make use of OpenID Connect protocol for the authentication
+Bundle-Category: security, authentication
+Bundle-Copyright: INFN (c) 2016
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.html
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Portal Settings
+Web-ContextPath: /portal-settings-authentication-iam-web

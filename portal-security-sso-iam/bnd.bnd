@@ -1,0 +1,19 @@
+Bundle-SymbolicName: com.liferay.portal.security.sso.iam
+Bundle-Version: 1.0.0
+Bundle-Name: Liferay Portal Security SSO IAM
+Bundle-Description: SSO module for INDIGO-DC IAM service. The IAM service is integrated using \
+	the OpenID Connect protocol
+Bundle-Category: security, authentication
+Bundle-Copyright: INFN (c) 2016
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.html
+Bundle-ClassPath:\
+	.,\
+	lib/oauth2-oidc-sdk.jar
+Export-Package:\
+	com.liferay.portal.security.sso.iam,\
+	com.liferay.portal.security.sso.iam.configuration,\
+	com.liferay.portal.security.sso.iam.constants
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Security Frameworks
+-liferay-includeresource:\
+	@oauth2-oidc-sdk-*.jar
