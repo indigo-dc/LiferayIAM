@@ -10,48 +10,22 @@ Export-Package:\
 	com.liferay.portal.security.sso.iam,\
 	com.liferay.portal.security.sso.iam.configuration,\
 	com.liferay.portal.security.sso.iam.constants
-Import-Package:\
+Import-Package: \
+	!org.apache.commons.*,\
+	!org.bouncycastle.*,\
 	!com.nimbusds.*,\
+	!org.joda.*,\
+	!org.opensaml.*,\
 	*
 Private-Package: \
-	com.nimbusds,\
-	com.nimbusds.jose,\
-	com.nimbusds.jose.crypto,\
-	com.nimbusds.jose.crypto.bc,\
-	com.nimbusds.jose.crypto.factories,\
-	com.nimbusds.jose.jca,\
-	com.nimbusds.jose.jwk,\
-	com.nimbusds.jose.jwk.source,\
-	com.nimbusds.jose.proc,\
-	com.nimbusds.jose.util,\
-	com.nimbusds.jwt,\
-	com.nimbusds.jwt.proc,\
-	com.nimbusds.jwt.util,\
-	com.nimbusds.langtag,\
-	com.nimbusds.oauth2,\
-	com.nimbusds.oauth2.sdk,\
-	com.nimbusds.oauth2.sdk.assertions,\
-	com.nimbusds.oauth2.sdk.assertions.jwt,\
-	com.nimbusds.oauth2.sdk.assertions.saml2,\
-	com.nimbusds.oauth2.sdk.auth,\
-	com.nimbusds.oauth2.sdk.auth.verifier,\
-	com.nimbusds.oauth2.sdk.client,\
-	com.nimbusds.oauth2.sdk.http,\
-	com.nimbusds.oauth2.sdk.id,\
-	com.nimbusds.oauth2.sdk.jose,\
-	com.nimbusds.oauth2.sdk.jose.jwk,\
-	com.nimbusds.oauth2.sdk.pkce,\
-	com.nimbusds.oauth2.sdk.token,\
-	com.nimbusds.oauth2.sdk.util,\
-	com.nimbusds.openid,\
-	com.nimbusds.openid.connect,\
-	com.nimbusds.openid.connect.sdk,\
-	com.nimbusds.openid.connect.sdk.claims,\
-	com.nimbusds.openid.connect.sdk.id,\
-	com.nimbusds.openid.connect.sdk.op,\
-	com.nimbusds.openid.connect.sdk.rp,\
-	com.nimbusds.openid.connect.sdk.token,\
-	com.nimbusds.openid.connect.sdk.validators
+	com.nimbusds.*,\
+	net.jcip.*,\
+	net.minidev.*,\
+	org.apache.commons.collections4.*,\
+	org.apache.commons.lang3.*,\
+	org.bouncycastle.*,\
+	org.joda.*,\
+	org.opensaml.*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Security Frameworks
 	
