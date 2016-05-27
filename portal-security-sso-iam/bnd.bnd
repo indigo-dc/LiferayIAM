@@ -11,11 +11,15 @@ Export-Package:\
 	com.liferay.portal.security.sso.iam.configuration,\
 	com.liferay.portal.security.sso.iam.constants
 Import-Package: \
-	!org.apache.commons.*,\
-	!org.bouncycastle.*,\
+	!bsh.*,\
 	!com.nimbusds.*,\
+	!com.werken.*,\
+	!org.apache.commons.*,\
+	!org.apache.velocity.*,\
+	!org.bouncycastle.*,\
 	!org.joda.*,\
 	!org.opensaml.*,\
+	!org.owasp.*,\
 	*
 Private-Package: \
 	com.nimbusds.*,\
@@ -23,9 +27,12 @@ Private-Package: \
 	net.minidev.*,\
 	org.apache.commons.collections4.*,\
 	org.apache.commons.lang3.*,\
+	org.apache.velocity.*,\
+	org.owasp.*,\
 	org.bouncycastle.*,\
 	org.joda.*,\
-	org.opensaml.*
+	org.opensaml.*\,
+	com.werken.*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Security Frameworks
 	
