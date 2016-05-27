@@ -39,6 +39,7 @@ import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -65,6 +66,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
+import com.nimbusds.oauth2.sdk.GeneralException;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -88,6 +90,7 @@ import com.nimbusds.openid.connect.sdk.UserInfoErrorResponse;
 import com.nimbusds.openid.connect.sdk.UserInfoRequest;
 import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import com.nimbusds.openid.connect.sdk.UserInfoSuccessResponse;
+import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
@@ -119,24 +122,22 @@ public class IAMImpl implements IAM {
 
 		try {
 			oidcMeta = getMetadata(companyId);
-			if (oidcMeta != null) {
-				tokenURI = oidcMeta.getTokenEndpointURI();
-				jwkURI = oidcMeta.getJWKSetURI();
-				userInfo = oidcMeta.getUserInfoEndpointURI();
-				issuer = oidcMeta.getIssuer();
-				validator = IDTokenValidator.create(
-						oidcMeta,
-						new OIDCClientInformation(new ClientID(iamConf.appId()),
-								null, new OIDCClientMetadata(),
-								new Secret(iamConf.appSecret())),
-						null);
-			}
 		} catch (Exception ex) {
 			_log.error("IAM Configuration URL '" + iamConf.configurationURL()
-				+ "' is not reachable");
+				+ "' is not reachable");	
 		}
-		
-		if (oidcMeta == null) {
+		if (oidcMeta != null) {
+			tokenURI = oidcMeta.getTokenEndpointURI();
+			jwkURI = oidcMeta.getJWKSetURI();
+			userInfo = oidcMeta.getUserInfoEndpointURI();
+			issuer = oidcMeta.getIssuer();
+			validator = new IDTokenValidator(
+					oidcMeta.getIssuer(),
+					new ClientID(iamConf.appId()),
+					JWSAlgorithm.RS256,
+					oidcMeta.getJWKSetURI().toURL());
+					
+		} else {
 			if (Validator.isNull(iamConf.oauthTokenURL()) || Validator.isNull(iamConf.openidJwkURL())) {
 				throw new ConfigurationException("IAM Authentication is not properly configured. Authentication cannot proceed");
 			}
@@ -181,9 +182,11 @@ public class IAMImpl implements IAM {
         OIDCTokenResponse oidcTokenResponse = (OIDCTokenResponse) tokenResp;
         
         try {
-        	validator.validate(oidcTokenResponse.getOIDCTokens().getIDToken(), null);
+        	_log.debug("Token response: " + oidcTokenResponse.toJSONObject().toString());
+        	IDTokenClaimsSet idtcs = validator.validate(oidcTokenResponse.getOIDCTokens().getIDToken(), null);
+        	_log.debug("IDToken claims" + idtcs.toJSONObject().toJSONString());
         } catch(BadJOSEException bjse) {
-        	_log.info("Invalid token detected");
+        	_log.error("Invalid token detected");
         	return null;
         }
         UserInfoRequest userInfoReq = new UserInfoRequest(
@@ -208,6 +211,7 @@ public class IAMImpl implements IAM {
             throw new AuthException("OpenId Connect server does not authenticate");
 
         UserInfoSuccessResponse successUserResponse = (UserInfoSuccessResponse) userInfoResp;
+		_log.debug("User Info Details: " + successUserResponse.getUserInfo().toJSONObject().toJSONString());
 		return doAddOrUpdateUser(session, companyId,
 				successUserResponse.getUserInfo(),
 				oidcTokenResponse.getOIDCTokens().getBearerAccessToken(),
@@ -308,7 +312,7 @@ public class IAMImpl implements IAM {
 			User user = userLocalService.getUserByEmailAddress(companyId, userInfo.getEmail().toString());
 			session.setAttribute(IAMWebKeys.IAM_USER_EMAIL_ADDRESS, userInfo.getEmail().toString());
 			return updateUser(companyId, user, userInfo, bearerAccessToken, refreshToken);
-		} catch (NoSuchUserException nsue) {
+		} catch (PortalException pe) {
 			_log.debug("No user found. It will be added");
 		}
 		return addUser(companyId, userInfo, bearerAccessToken, refreshToken);
@@ -326,7 +330,7 @@ public class IAMImpl implements IAM {
 		String emailAddress = userInfo.getEmail().toString();
 		String openId = StringPool.BLANK;
 		Locale locale = LocaleUtil.getDefault();
-		String firstName = userInfo.getGivenName();
+		String firstName = userInfo.getName();
 		String middleName = StringPool.BLANK;
 		String lastName = userInfo.getFamilyName();
 		long prefixId = 0;
@@ -342,6 +346,16 @@ public class IAMImpl implements IAM {
 		long[] userGroupIds = null;
 		boolean sendEmail = true;
 
+		if (Validator.isNotNull(userInfo.getPreferredUsername())) {
+			try {
+				userLocalService.getUserByScreenName(companyId, userInfo.getPreferredUsername());
+			} catch (PortalException pe) {
+				autoScreenName = false;
+				screenName = userInfo.getPreferredUsername();				
+			}
+		}
+		
+
 		ServiceContext serviceContext = new ServiceContext();
 
 		User user = userLocalService.addUser(
@@ -356,15 +370,21 @@ public class IAMImpl implements IAM {
 		user = userLocalService.updateEmailAddressVerified(
 			user.getUserId(), true);
 		
+		user = userLocalService.updateAgreedToTermsOfUse(user.getUserId(), true);
+		
+		user = userLocalService.updateReminderQuery(user.getUserId(), "IAM Authentication", "NOT REQUESTED");
+		
 		ExpandoValueLocalServiceUtil.addValue(
 				companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 				"iamUserID", user.getUserId(), userInfo.getSubject().getValue());
 		ExpandoValueLocalServiceUtil.addValue(
 				companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 				"iamAccessToken", user.getUserId(), bearerAccessToken.getValue());
-		ExpandoValueLocalServiceUtil.addValue(
-				companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
-				"iamRefreshToken", user.getUserId(), refreshToken.getValue());
+		if (Validator.isNotNull(refreshToken)) {
+			ExpandoValueLocalServiceUtil.addValue(
+					companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+					"iamRefreshToken", user.getUserId(), refreshToken.getValue());
+		}
 		return user;
 	}
 
@@ -373,7 +393,7 @@ public class IAMImpl implements IAM {
 					throws Exception {
 		
 		String emailAddress = userInfo.getEmail().toString();
-		String firstName = userInfo.getGivenName();
+		String firstName = userInfo.getName();
 		String lastName = userInfo.getFamilyName();
 		boolean male = Validator.equals(userInfo.getGender(), "male");
 
@@ -383,10 +403,11 @@ public class IAMImpl implements IAM {
 		ExpandoValueLocalServiceUtil.addValue(
 				companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 				"iamAccessToken", user.getUserId(), bearerAccessToken.getValue());
-		ExpandoValueLocalServiceUtil.addValue(
-				companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
-				"iamRefreshToken", user.getUserId(), refreshToken.getValue());
-
+		if (Validator.isNotNull(refreshToken)) {
+			ExpandoValueLocalServiceUtil.addValue(
+					companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+					"iamRefreshToken", user.getUserId(), refreshToken.getValue());
+		}
 		if (emailAddress.equals(user.getEmailAddress()) &&
 			firstName.equals(user.getFirstName()) &&
 			lastName.equals(user.getLastName())) {

@@ -29,6 +29,7 @@ Private-Package: \
 	net.minidev.*,\
 	org.apache.commons.collections4.*,\
 	org.apache.commons.lang3.*,\
+	org.apache.commons.io.*,\
 	org.apache.velocity.*,\
 	org.owasp.*,\
 	org.bouncycastle.*,\
