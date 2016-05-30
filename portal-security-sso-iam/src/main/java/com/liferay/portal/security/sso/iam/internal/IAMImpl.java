@@ -330,9 +330,6 @@ public class IAMImpl implements IAM {
 		String emailAddress = userInfo.getEmail().toString();
 		String openId = StringPool.BLANK;
 		Locale locale = LocaleUtil.getDefault();
-		String firstName = userInfo.getName();
-		String middleName = StringPool.BLANK;
-		String lastName = userInfo.getFamilyName();
 		long prefixId = 0;
 		long suffixId = 0;
 		boolean male = Validator.equals(userInfo.getGender(), "male");
@@ -345,6 +342,43 @@ public class IAMImpl implements IAM {
 		long[] roleIds = null;
 		long[] userGroupIds = null;
 		boolean sendEmail = true;
+
+		
+		String firstName = userInfo.getGivenName();
+		if (Validator.isNull(firstName)) {
+			if (Validator.isNotNull(userInfo.getName())) {
+				String fullName[] = userInfo.getName().split(" "); 
+				switch (fullName.length) {
+					case 1:
+					case 2:
+						firstName = fullName[0];
+						break;
+					default:
+						firstName = fullName[1];
+				}
+			} else {
+				firstName = userInfo.getSubject().getValue().substring(0, 8) + "...";
+			}
+		}
+		String middleName = StringPool.BLANK;
+		String lastName = userInfo.getFamilyName();
+		if (Validator.isNull(lastName)) {
+			if (Validator.isNotNull(userInfo.getName())) {
+				String fullName[] = userInfo.getName().split(" "); 
+				switch (fullName.length) {
+					case 1:
+						firstName = fullName[0];
+						break;
+					case 2:
+						firstName = fullName[1];
+						break;
+					default:
+						firstName = fullName[fullName.length - 1];
+				}
+			} else {
+				lastName = "IAM User";
+			}
+		}
 
 		if (Validator.isNotNull(userInfo.getPreferredUsername())) {
 			try {
