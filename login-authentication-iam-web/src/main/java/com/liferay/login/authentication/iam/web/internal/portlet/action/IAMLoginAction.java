@@ -198,7 +198,7 @@ public class IAMLoginAction extends BaseStrutsAction {
 			"/portal/iam_openidconnect?cmd=token";
 
 	private static final List<String> _scopesLogin = Arrays.asList(
-		"openid", "profile", "email");
+		"openid", "profile", "email", "offline_access");
 
 	private IAM iam;
 
