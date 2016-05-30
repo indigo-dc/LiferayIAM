@@ -22,6 +22,8 @@
 
 package com.liferay.login.authentication.iam.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
@@ -37,7 +39,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.security.sso.iam.IAM;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -99,6 +100,7 @@ public class IAMLoginAction extends BaseStrutsAction {
 						returnRequestUri, _scopesLogin);
 
 				} catch (Exception ex) {
+					_log.error(ex);
 					return null;
 				}
 
@@ -199,4 +201,6 @@ public class IAMLoginAction extends BaseStrutsAction {
 		"openid", "profile", "email");
 
 	private IAM iam;
-}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+			IAMLoginAction.class);}
