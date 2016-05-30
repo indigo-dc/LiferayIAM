@@ -387,7 +387,7 @@ public class IAMImpl implements IAM {
 		
 
 		ServiceContext serviceContext = new ServiceContext();
-
+		_log.debug("New user with mail " + emailAddress + " to be added");
 		User user = userLocalService.addUser(
 			creatorUserId, companyId, autoPassword, password1, password2,
 			autoScreenName, screenName, emailAddress, 0, openId, locale,
@@ -415,6 +415,7 @@ public class IAMImpl implements IAM {
 					companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 					"iamRefreshToken", user.getUserId(), refreshToken.getValue());
 		}
+		_log.info("New user with id '" + user.getUserId() + "' added");
 		return user;
 	}
 

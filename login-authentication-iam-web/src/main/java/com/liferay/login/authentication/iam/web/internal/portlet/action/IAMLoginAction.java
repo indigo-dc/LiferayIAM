@@ -92,9 +92,15 @@ public class IAMLoginAction extends BaseStrutsAction {
 			if (Validator.isNotNull(authorizationCode)) {
 				String returnRequestUri = getReturnRequestUri(request);
 
-				User user = iam.addOrUpdateUser(
-					session, themeDisplay.getCompanyId(), authorizationCode,
-					returnRequestUri, _scopesLogin);
+				User user = null;
+				try {
+					user = iam.addOrUpdateUser(
+						session, themeDisplay.getCompanyId(), authorizationCode,
+						returnRequestUri, _scopesLogin);
+
+				} catch (Exception ex) {
+					return null;
+				}
 
 				if ((user != null) &&
 					(user.getStatus() == WorkflowConstants.STATUS_INCOMPLETE)) {
