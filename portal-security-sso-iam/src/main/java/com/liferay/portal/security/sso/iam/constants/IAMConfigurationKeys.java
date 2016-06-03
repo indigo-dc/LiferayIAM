@@ -49,4 +49,6 @@ public class IAMConfigurationKeys {
 
 	public static final String VERIFIED_ACCOUNT_REQUIRED =
 		"verifiedAccountRequired";
+
+	public static final String GROUP_PREFIX = "iam-";
 }

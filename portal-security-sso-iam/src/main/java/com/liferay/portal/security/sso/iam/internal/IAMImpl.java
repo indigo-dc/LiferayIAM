@@ -27,11 +27,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -44,12 +46,14 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.UserGroupRole;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.settings.CompanyServiceSettingsLocator;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
@@ -59,6 +63,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.sso.iam.IAM;
 import com.liferay.portal.security.sso.iam.configuration.IAMConfiguration;
+import com.liferay.portal.security.sso.iam.constants.IAMConfigurationKeys;
 import com.liferay.portal.security.sso.iam.constants.IAMConstants;
 import com.liferay.portal.security.sso.iam.constants.IAMWebKeys;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -92,6 +97,9 @@ import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import com.nimbusds.openid.connect.sdk.validators.IDTokenValidator;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 /**
  * @author Marco Fargetta
@@ -336,7 +344,7 @@ public class IAMImpl implements IAM {
 		long[] groupIds = null;
 		long[] organizationIds = null;
 		long[] roleIds = null;
-		long[] userGroupIds = null;
+		long[] userGroupIds = getUserGroupIds(companyId, userInfo.getClaim("groups"));
 		boolean sendEmail = true;
 
 		
@@ -419,7 +427,42 @@ public class IAMImpl implements IAM {
 		return user;
 	}
 
-	private User updateUser(long companyId, User user, UserInfo userInfo,
+	private long[] getUserGroupIds(long companyId, Object listGroups) {
+		if (Validator.isNull(listGroups) ||
+				!(listGroups instanceof JSONArray)) {
+			return null;
+		}
+		JSONArray groups = (JSONArray) listGroups;
+		List<Long> groupIds = new LinkedList<>();
+		for (int i=0; i< groups.size(); i++) {
+			JSONObject gr = (JSONObject) groups.get(i);
+			String groupName = IAMConfigurationKeys.GROUP_PREFIX + gr.get("name").toString();
+			
+			UserGroup lifeUG = null;
+			ServiceContext serviceContext = new ServiceContext();
+			try {
+				lifeUG = userGroupLocalService.getUserGroup(companyId, groupName);
+			} catch (PortalException pe) {
+				try {
+					lifeUG = userGroupLocalService.addUserGroup(
+							userLocalService.getDefaultUserId(companyId),
+							companyId, groupName, "IAM Provided group",
+							serviceContext);
+					_log.info("Created the group: " + groupName);
+				} catch (Exception pe2) {
+					_log.error("Impossible update group: " + groupName);
+					continue;
+				}
+			}
+			groupIds.add(lifeUG.getUserGroupId());
+		}
+		if (groupIds.isEmpty()) {
+			return null;
+		}
+		long realGroups[] = ArrayUtils.toPrimitive(groupIds.toArray(new Long[groupIds.size()])); 
+		return realGroups;
+	}
+	private User updateUser(long companyId, User user, UserInfo userInfo,		
 			BearerAccessToken bearerAccessToken, RefreshToken refreshToken)
 					throws Exception {
 		
@@ -439,12 +482,6 @@ public class IAMImpl implements IAM {
 					companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 					"iamRefreshToken", user.getUserId(), refreshToken.getValue());
 		}
-		if (emailAddress.equals(user.getEmailAddress()) &&
-			firstName.equals(user.getFirstName()) &&
-			lastName.equals(user.getLastName())) {
-
-			return user;
-		}
 
 		Contact contact = user.getContact();
 
@@ -460,8 +497,7 @@ public class IAMImpl implements IAM {
 		long[] organizationIds = null;
 		long[] roleIds = null;
 		List<UserGroupRole> userGroupRoles = null;
-		long[] userGroupIds = null;
-
+		long[] userGroupIds = getUserGroupIds(companyId, userInfo.getClaim("groups"));
 		ServiceContext serviceContext = new ServiceContext();
 
 
@@ -492,6 +528,9 @@ public class IAMImpl implements IAM {
 
 	@Reference
 	private UserLocalService userLocalService;
+
+	@Reference
+	private UserGroupLocalService userGroupLocalService;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 			IAMImpl.class);
