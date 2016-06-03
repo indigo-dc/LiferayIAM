@@ -219,7 +219,7 @@ public class IAMImpl implements IAM {
 	public String getLoginRedirect(long companyId, String returnRequestUri, List<String> scopes) throws Exception {
 		IAMConfiguration iamConf = getIAMConfiguration(companyId);
 		URI authURI = null;
-		
+		String fullScopes = StringUtil.merge(scopes, " ") + " " + iamConf.oauthExtraScopes();
 		try {
 			OIDCProviderMetadata oidcMeta = getMetadata(companyId);
 			if (oidcMeta != null) {
@@ -239,7 +239,7 @@ public class IAMImpl implements IAM {
 		AuthenticationRequest aReq = new AuthenticationRequest(
 				authURI,
 				new ResponseType(ResponseType.Value.CODE),
-				Scope.parse(StringUtil.merge(scopes, " ")),
+				Scope.parse(fullScopes),
 				new ClientID(iamConf.appId()),
 				new URI(returnRequestUri),
 				new State(),
