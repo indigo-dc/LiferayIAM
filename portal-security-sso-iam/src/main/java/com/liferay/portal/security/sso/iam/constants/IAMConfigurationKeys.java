@@ -39,6 +39,8 @@ public class IAMConfigurationKeys {
 
 	public static final String OAUTH_TOKEN_URL = "oauthTokenURL";
 
+	public static final String OAUTH_EXTRA_SCOPES = "oauthExtraScopes";
+
 	public static final String OPENID_USERINFO_URL = "openidUserinfoURL";
 
 	public static final String OPENID_JWK_URL = "openidJwkURL";

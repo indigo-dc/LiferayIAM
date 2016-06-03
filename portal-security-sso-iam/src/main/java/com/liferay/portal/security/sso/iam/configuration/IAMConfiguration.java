@@ -80,4 +80,7 @@ public interface IAMConfiguration {
 
 	@Meta.AD(name ="%openid-issuer", required = false)
 	public String openidIssuer();
+
+	@Meta.AD(name ="%oauth-extra-scopes", required = false)
+	public String oauthExtraScopes();
 }

@@ -43,6 +43,7 @@ String oauthTokenURL = iamConfiguration.oauthTokenURL();
 String openidUserinfoURL = iamConfiguration.openidUserinfoURL();
 String openidJwkURL = iamConfiguration.openidJwkURL();
 String openidIssuer = iamConfiguration.openidIssuer();
+String oauthExtraScopes = iamConfiguration.oauthExtraScopes();
 %>
 
 <liferay-ui:error key="iamConfigurationURLInvalid" message="the-iam-configuration-url-is-invalid" />
@@ -74,4 +75,5 @@ String openidIssuer = iamConfiguration.openidIssuer();
 
 	<aui:input cssClass="lfr-input-text-container" label="the-iam-openid-issuer" name="iam--openidIssuer" type="text" value="<%= openidIssuer %>" />
 
+	<aui:input cssClass="lfr-input-text-container" label="the-iam-oauth-extra-scopes" name="iam--oauthExtraScopes" type="text" value="<%= oauthExtraScopes %>" />
 </aui:fieldset>
