@@ -25,6 +25,7 @@ package com.liferay.portal.security.sso.iam.internal.instance.lifecycle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
@@ -69,8 +70,8 @@ public class AddIAMExpandoColumnsPortalInstanceLifecycleListener
 
 			UnicodeProperties properties = new UnicodeProperties();
 
-			properties.setProperty("hidden", "false");
-			properties.setProperty("visible-with-update-permission", "true");
+			properties.setProperty(ExpandoColumnConstants.PROPERTY_HIDDEN, "false");
+			properties.setProperty("visible-with-update-permission", "false");
 
 			addExpandoColumn(expandoTable, "iamUserID", properties);
 			addExpandoColumn(expandoTable, "iamAccessToken", properties);

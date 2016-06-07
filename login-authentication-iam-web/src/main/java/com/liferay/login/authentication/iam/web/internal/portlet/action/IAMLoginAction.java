@@ -81,7 +81,7 @@ public class IAMLoginAction extends BaseStrutsAction {
 			String returnRequestUri = getReturnRequestUri(request);
 
 			String loginRedirect = iam.getLoginRedirect(
-				themeDisplay.getCompanyId(), returnRequestUri, _scopesLogin);
+				themeDisplay.getCompanyId(), returnRequestUri, _scopesLogin, false);
 
 			response.sendRedirect(loginRedirect);
 		}
@@ -98,6 +98,13 @@ public class IAMLoginAction extends BaseStrutsAction {
 					user = iam.addOrUpdateUser(
 						session, themeDisplay.getCompanyId(), authorizationCode,
 						returnRequestUri, _scopesLogin);
+					if (!iam.hasRefreshToken(user)) {
+						String loginRedirect = iam.getLoginRedirect(
+							themeDisplay.getCompanyId(), returnRequestUri, _scopesLogin, true);
+
+						response.sendRedirect(loginRedirect);
+						return super.execute(request, response);						
+					}
 
 				} catch (Exception ex) {
 					_log.error(ex);
@@ -198,8 +205,8 @@ public class IAMLoginAction extends BaseStrutsAction {
 			"/portal/iam_openidconnect?cmd=token";
 
 	private static final List<String> _scopesLogin = Arrays.asList(
-		"openid", "profile", "email", "offline_access");
-
+		"openid", "profile", "email");
+	
 	private IAM iam;
 
 	private static final Log _log = LogFactoryUtil.getLog(

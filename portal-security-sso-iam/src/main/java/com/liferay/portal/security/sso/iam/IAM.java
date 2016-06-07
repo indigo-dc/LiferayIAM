@@ -38,8 +38,11 @@ public interface IAM {
 		throws Exception;
 
 	public String getLoginRedirect(
-			long companyId, String returnRequestUri, List<String> scopes)
+			long companyId, String returnRequestUri,
+			List<String> scopes, boolean isRefreshTokenRequested)
 		throws Exception;
 
 	public boolean isEnabled(long companyId);
+	
+	public boolean hasRefreshToken(User user);
 }

@@ -224,10 +224,13 @@ public class IAMImpl implements IAM {
 
 
 	@Override
-	public String getLoginRedirect(long companyId, String returnRequestUri, List<String> scopes) throws Exception {
+	public String getLoginRedirect(long companyId, String returnRequestUri, List<String> scopes, boolean isRefreshTokenRequested) throws Exception {
 		IAMConfiguration iamConf = getIAMConfiguration(companyId);
 		URI authURI = null;
 		String fullScopes = StringUtil.merge(scopes, " ") + " " + iamConf.oauthExtraScopes();
+		if (isRefreshTokenRequested) {
+			fullScopes = fullScopes.concat(" offline_access");
+		}
 		try {
 			OIDCProviderMetadata oidcMeta = getMetadata(companyId);
 			if (oidcMeta != null) {
@@ -521,7 +524,17 @@ public class IAMImpl implements IAM {
 			birthdayYear, contact.getSmsSn(), contact.getFacebookSn(),
 			contact.getJabberSn(), contact.getSkypeSn(), contact.getTwitterSn(),
 			contact.getJobTitle(), groupIds, organizationIds, roleIds,
-			userGroupRoles, userGroupIds, serviceContext);	}
+			userGroupRoles, userGroupIds, serviceContext);
+	}
+
+	@Override
+	public boolean hasRefreshToken(User user) {
+		ExpandoValue refreshToken = ExpandoValueLocalServiceUtil.getValue(
+				user.getCompanyId(), User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+				"iamRefreshToken", user.getUserId());
+		_log.debug("User has the refresh token: " + refreshToken);
+		return (Validator.isNotNull(refreshToken) && Validator.isNotNull(refreshToken.getData()));
+	}
 
 	@Reference
 	private ConfigurationProvider configurationProvider;
