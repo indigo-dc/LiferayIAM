@@ -1,0 +1,7 @@
+Bundle-SymbolicName: service.iam.token-api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.portal.security.sso.iam.service, \
+	com.liferay.portal.security.sso.iam.exception, \
+	com.liferay.portal.security.sso.iam.model, \
+	com.liferay.portal.security.sso.iam.service.persistence
