@@ -87,8 +87,76 @@ public class TokenServiceHttp {
 		}
 	}
 
+	public static java.lang.String getToken(HttpPrincipal httpPrincipal)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(TokenServiceUtil.class,
+					"getToken", _getTokenParameterTypes1);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.lang.String)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static java.lang.String getTokenInfo(HttpPrincipal httpPrincipal,
+		java.lang.String token,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(TokenServiceUtil.class,
+					"getTokenInfo", _getTokenInfoParameterTypes2);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, token,
+					serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.lang.String)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(TokenServiceHttp.class);
 	private static final Class<?>[] _getTokenParameterTypes0 = new Class[] {
 			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _getTokenParameterTypes1 = new Class[] {  };
+	private static final Class<?>[] _getTokenInfoParameterTypes2 = new Class[] {
+			java.lang.String.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

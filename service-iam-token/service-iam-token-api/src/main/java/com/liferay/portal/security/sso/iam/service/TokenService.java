@@ -60,6 +60,13 @@ public interface TokenService extends BaseService {
 	public java.lang.String getOSGiServiceIdentifier();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.lang.String getToken() throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.lang.String getToken(long userId, ServiceContext serviceContext)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.lang.String getTokenInfo(java.lang.String token,
+		ServiceContext serviceContext) throws PortalException;
 }

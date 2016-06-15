@@ -51,10 +51,21 @@ public class TokenServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static java.lang.String getToken()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getToken();
+	}
+
 	public static java.lang.String getToken(long userId,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getToken(userId, serviceContext);
+	}
+
+	public static java.lang.String getTokenInfo(java.lang.String token,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getTokenInfo(token, serviceContext);
 	}
 
 	public static TokenService getService() {

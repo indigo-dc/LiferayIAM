@@ -80,5 +80,34 @@ public class TokenServiceSoap {
 		}
 	}
 
+	public static java.lang.String getToken() throws RemoteException {
+		try {
+			java.lang.String returnValue = TokenServiceUtil.getToken();
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static java.lang.String getTokenInfo(java.lang.String token,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			java.lang.String returnValue = TokenServiceUtil.getTokenInfo(token,
+					serviceContext);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(TokenServiceSoap.class);
 }

@@ -50,6 +50,14 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
 	    return "Accesso Token is: Ciccino";
 	}
 	
+	public String getToken() throws PortalException {
+	    return "Accesso Token is: Ciccino";
+	}
+
+	public String getTokenInfo(String token, ServiceContext serviceContext)  throws PortalException {
+		return null;
+	}
+
 	@Reference(unbind = "-")
 	protected void setIam(IAM iam) {
 		this.iam = iam;
