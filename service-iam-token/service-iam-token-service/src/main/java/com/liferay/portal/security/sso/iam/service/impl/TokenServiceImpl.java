@@ -16,8 +16,11 @@ package com.liferay.portal.security.sso.iam.service.impl;
 
 import org.osgi.service.component.annotations.Reference;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.security.sso.iam.IAM;
 import com.liferay.portal.security.sso.iam.service.base.TokenServiceBaseImpl;
+import com.liferay.portal.security.sso.iam.service.permission.TokenAccessPermissionChecker;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -42,8 +45,8 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.liferay.portal.security.sso.iam.service.TokenServiceUtil} to access the token remote service.
 	 */
-	public String getToken(long userId) {
-		
+	public String getToken(long userId, ServiceContext serviceContext) throws PortalException {
+		TokenAccessPermissionChecker.check(getPermissionChecker(), userId, serviceContext.getScopeGroupId(), "VIEW");
 	    return "Accesso Token is: Ciccino";
 	}
 	

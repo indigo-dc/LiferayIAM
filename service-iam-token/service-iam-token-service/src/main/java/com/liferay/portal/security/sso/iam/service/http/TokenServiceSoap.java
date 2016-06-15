@@ -64,10 +64,12 @@ import java.rmi.RemoteException;
  */
 @ProviderType
 public class TokenServiceSoap {
-	public static java.lang.String getToken(long userId)
+	public static java.lang.String getToken(long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			java.lang.String returnValue = TokenServiceUtil.getToken(userId);
+			java.lang.String returnValue = TokenServiceUtil.getToken(userId,
+					serviceContext);
 
 			return returnValue;
 		}

@@ -55,12 +55,15 @@ import com.liferay.portal.security.sso.iam.service.TokenServiceUtil;
 @ProviderType
 public class TokenServiceHttp {
 	public static java.lang.String getToken(HttpPrincipal httpPrincipal,
-		long userId) {
+		long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(TokenServiceUtil.class,
 					"getToken", _getTokenParameterTypes0);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, userId);
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					serviceContext);
 
 			Object returnObj = null;
 
@@ -68,6 +71,10 @@ public class TokenServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -82,6 +89,6 @@ public class TokenServiceHttp {
 
 	private static Log _log = LogFactoryUtil.getLog(TokenServiceHttp.class);
 	private static final Class<?>[] _getTokenParameterTypes0 = new Class[] {
-			long.class
+			long.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

@@ -1005,16 +1005,16 @@ public class TokenPersistenceImpl extends BasePersistenceImpl<Token>
 			Serializable serializable = entityCache.getResult(TokenModelImpl.ENTITY_CACHE_ENABLED,
 					TokenImpl.class, primaryKey);
 
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
+			if (serializable == null) {
+				if (uncachedPrimaryKeys == null) {
+					uncachedPrimaryKeys = new HashSet<Serializable>();
+				}
 
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (Token)serializable);
-				}
+				uncachedPrimaryKeys.add(primaryKey);
+			}
+			else {
+				map.put(primaryKey, (Token)serializable);
+			}
 		}
 
 		if (uncachedPrimaryKeys == null) {
