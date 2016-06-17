@@ -23,10 +23,10 @@
 package com.liferay.portal.security.sso.iam.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -66,23 +66,35 @@ import com.liferay.portal.security.sso.iam.configuration.IAMConfiguration;
 import com.liferay.portal.security.sso.iam.constants.IAMConfigurationKeys;
 import com.liferay.portal.security.sso.iam.constants.IAMConstants;
 import com.liferay.portal.security.sso.iam.constants.IAMWebKeys;
+import com.liferay.portal.security.sso.iam.internal.util.IAMEndPoints;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.BadJOSEException;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
+import com.nimbusds.oauth2.sdk.AuthorizationGrant;
 import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.RefreshTokenGrant;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.TokenErrorResponse;
 import com.nimbusds.oauth2.sdk.TokenRequest;
 import com.nimbusds.oauth2.sdk.TokenResponse;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
-import com.nimbusds.oauth2.sdk.auth.Secret;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.oauth2.sdk.id.ClientID;
-import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.oauth2.sdk.id.State;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
@@ -95,8 +107,6 @@ import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import com.nimbusds.openid.connect.sdk.UserInfoSuccessResponse;
 import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
-import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
-import com.nimbusds.openid.connect.sdk.validators.IDTokenValidator;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -111,52 +121,19 @@ import net.minidev.json.JSONObject;
 )
 public class IAMImpl implements IAM {
 
+	public IAMImpl() {
+		_log.error("Invoked the IAM service");
+	}
 	@Override
 	public User addOrUpdateUser(HttpSession session, long companyId, String authorizationCode, String returnRequestUri,
 			List<String> scopes) throws Exception {
 		_log.debug("Add or update a new user");
-		IAMConfiguration iamConf = getIAMConfiguration(companyId);
-		OIDCProviderMetadata oidcMeta = null;
-		URI tokenURI = null;
-		URI jwkURI = null;
-		URI userInfo = null;
-		Issuer issuer = null;
-		IDTokenValidator validator = null;
+		IAMEndPoints iamEP = new IAMEndPoints(getIAMConfiguration(companyId));
 		AuthorizationCode authCode = new AuthorizationCode(authorizationCode);
 
-		try {
-			oidcMeta = getMetadata(companyId);
-		} catch (Exception ex) {
-			_log.error("IAM Configuration URL '" + iamConf.configurationURL()
-				+ "' is not reachable");	
-		}
-		if (oidcMeta != null) {
-			tokenURI = oidcMeta.getTokenEndpointURI();
-			jwkURI = oidcMeta.getJWKSetURI();
-			userInfo = oidcMeta.getUserInfoEndpointURI();
-			issuer = oidcMeta.getIssuer();
-			validator = new IDTokenValidator(
-					oidcMeta.getIssuer(),
-					new ClientID(iamConf.appId()),
-					JWSAlgorithm.RS256,
-					oidcMeta.getJWKSetURI().toURL());
-					
-		} else {
-			if (Validator.isNull(iamConf.oauthTokenURL()) || Validator.isNull(iamConf.openidJwkURL())) {
-				throw new ConfigurationException("IAM Authentication is not properly configured. Authentication cannot proceed");
-			}
-			issuer = new Issuer(iamConf.openidIssuer());
-			tokenURI = new URI(iamConf.oauthTokenURL());
-			jwkURI = new URI(iamConf.openidJwkURL());
-			userInfo = new URI(iamConf.openidUserinfoURL());
-			validator = new IDTokenValidator(issuer,
-					new ClientID(iamConf.appId()),
-					JWSAlgorithm.RS256,
-					jwkURI.toURL());
-		}		
 		TokenRequest tokenReq = new TokenRequest(
-				tokenURI,
-				new ClientSecretBasic(new ClientID(iamConf.appId()), new Secret(iamConf.appSecret())),
+				iamEP.getTokenURI(),
+				new ClientSecretBasic(iamEP.getClientID(), iamEP.getSecret()),
 				new AuthorizationCodeGrant(authCode, new URI(returnRequestUri)));
 
 		HTTPResponse tokenHTTPResp = null;
@@ -187,14 +164,14 @@ public class IAMImpl implements IAM {
         
         try {
         	_log.debug("Token response: " + oidcTokenResponse.toJSONObject().toString());
-        	IDTokenClaimsSet idtcs = validator.validate(oidcTokenResponse.getOIDCTokens().getIDToken(), null);
+        	IDTokenClaimsSet idtcs = iamEP.getValidator().validate(oidcTokenResponse.getOIDCTokens().getIDToken(), null);
         	_log.debug("IDToken claims" + idtcs.toJSONObject().toJSONString());
         } catch(BadJOSEException bjse) {
-        	_log.error("Invalid token detected");
-        	return null;
+        	_log.error("Invalid token detected: " + bjse.getMessage());
+        	throw bjse;
         }
         UserInfoRequest userInfoReq = new UserInfoRequest(
-        		userInfo, oidcTokenResponse.getOIDCTokens().getBearerAccessToken());
+        		iamEP.getUserInfo(), oidcTokenResponse.getOIDCTokens().getBearerAccessToken());
   
         HTTPResponse userInfoHTTPResp = null;
         try {
@@ -226,29 +203,13 @@ public class IAMImpl implements IAM {
 	@Override
 	public String getLoginRedirect(long companyId, String returnRequestUri, List<String> scopes, boolean isRefreshTokenRequested) throws Exception {
 		IAMConfiguration iamConf = getIAMConfiguration(companyId);
-		URI authURI = null;
+		IAMEndPoints iamEP = new IAMEndPoints(iamConf);
 		String fullScopes = StringUtil.merge(scopes, " ") + " " + iamConf.oauthExtraScopes();
 		if (isRefreshTokenRequested) {
 			fullScopes = fullScopes.concat(" offline_access");
 		}
-		try {
-			OIDCProviderMetadata oidcMeta = getMetadata(companyId);
-			if (oidcMeta != null) {
-				authURI = oidcMeta.getAuthorizationEndpointURI();
-			}
-		} catch (Exception ex) {
-			_log.error("IAM Configuration URL '" + iamConf.configurationURL()
-				+ "' is not reachable");
-		}
-		
-		if (authURI == null) {
-			if (Validator.isNull(iamConf.oauthAuthURL())) {
-				throw new ConfigurationException("IAM Authentication is not properly configured. Authentication cannot proceed");
-			}
-			authURI = new URI(iamConf.oauthAuthURL());
-		}
 		AuthenticationRequest aReq = new AuthenticationRequest(
-				authURI,
+				iamEP.getAuthURI(),
 				new ResponseType(ResponseType.Value.CODE),
 				Scope.parse(fullScopes),
 				new ClientID(iamConf.appId()),
@@ -270,6 +231,29 @@ public class IAMImpl implements IAM {
 		return iamConfiguration.enabled();
 	}
 	
+	@Override
+	public String getUserToken(long userId) throws Exception {
+		User user = userLocalService.getUser(userId);
+		String token;
+		ExpandoValue accessToken = ExpandoValueLocalServiceUtil.getValue(
+				user.getCompanyId(), User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+				"iamAccessToken", user.getUserId());
+		token = accessToken.getData();
+		if (!isValidToken(user.getCompanyId(), token)) {
+			token = updateUserToken(user);
+		}
+		return token;
+	}
+
+	@Override
+	public boolean hasRefreshToken(User user) {
+		ExpandoValue refreshToken = ExpandoValueLocalServiceUtil.getValue(
+				user.getCompanyId(), User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+				"iamRefreshToken", user.getUserId());
+		_log.debug("User has the refresh token: " + refreshToken);
+		return (Validator.isNotNull(refreshToken) && Validator.isNotNull(refreshToken.getData()));
+	}
+
 	protected IAMConfiguration getIAMConfiguration(long companyId) {
 		try {
 			return configurationProvider.getConfiguration(
@@ -282,19 +266,6 @@ public class IAMImpl implements IAM {
 		}
 	}
 
-	private OIDCProviderMetadata getMetadata(long companyId) throws Exception{
-		IAMConfiguration iamConf = getIAMConfiguration(companyId);
-		if (Validator.isNull(iamConf.configurationURL())) {
-			return null;
-		}
-		URL configurationURL = new URL(iamConf.configurationURL());
-		InputStream stream = configurationURL.openStream();
-		String info = null;
-		try (java.util.Scanner s = new java.util.Scanner(stream)) {
-			info = s.useDelimiter("\\A").hasNext() ? s.next() : "";
-		}
-		return OIDCProviderMetadata.parse(info);
-	}
 
 	private User doAddOrUpdateUser(HttpSession session, long companyId,
 			UserInfo userInfo, BearerAccessToken bearerAccessToken,
@@ -465,6 +436,7 @@ public class IAMImpl implements IAM {
 		long realGroups[] = ArrayUtils.toPrimitive(groupIds.toArray(new Long[groupIds.size()])); 
 		return realGroups;
 	}
+
 	private User updateUser(long companyId, User user, UserInfo userInfo,		
 			BearerAccessToken bearerAccessToken, RefreshToken refreshToken)
 					throws Exception {
@@ -527,13 +499,67 @@ public class IAMImpl implements IAM {
 			userGroupRoles, userGroupIds, serviceContext);
 	}
 
-	@Override
-	public boolean hasRefreshToken(User user) {
-		ExpandoValue refreshToken = ExpandoValueLocalServiceUtil.getValue(
+	private String updateUserToken(User user) {
+		ExpandoValue refreshTokenEV = ExpandoValueLocalServiceUtil.getValue(
 				user.getCompanyId(), User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 				"iamRefreshToken", user.getUserId());
-		_log.debug("User has the refresh token: " + refreshToken);
-		return (Validator.isNotNull(refreshToken) && Validator.isNotNull(refreshToken.getData()));
+		RefreshToken refreshToken = new RefreshToken(refreshTokenEV.getData());
+		AuthorizationGrant refreshTokenGrant = new RefreshTokenGrant(refreshToken);
+		IAMEndPoints iamEP;
+		try {
+			iamEP = new IAMEndPoints(getIAMConfiguration(user.getCompanyId()));
+		} catch (ConfigurationException e) {
+			_log.error(e);
+			return null;
+		}
+		ClientAuthentication clientAuth = new ClientSecretBasic(iamEP.getClientID(), iamEP.getSecret());
+		TokenRequest request = new TokenRequest(iamEP.getTokenURI(), clientAuth, refreshTokenGrant);
+		TokenResponse response;
+		try {
+			response = TokenResponse.parse(request.toHTTPRequest().send());
+		} catch (ParseException | IOException e) {
+			_log.error("Impossible to parse the token endpoint response to update the token");
+			return null;
+		}
+		if (! response.indicatesSuccess()) {
+		    TokenErrorResponse errorResponse = (TokenErrorResponse) response;
+		    _log.error("Refresh token error: \n" + errorResponse.toJSONObject().toString());
+		    return null;
+		}
+		AccessTokenResponse successResponse = (AccessTokenResponse) response;
+		AccessToken accessToken = successResponse.getTokens().getAccessToken();
+		try {
+			ExpandoValueLocalServiceUtil.addValue(
+					user.getCompanyId(), User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+					"iamAccessToken", user.getUserId(), accessToken.getValue());
+		} catch (PortalException e) {
+			_log.error("Impossible to store the updated access token for the user '" + user.getScreenName() + "'");
+		}
+		
+		return accessToken.getValue();
+	}
+
+
+	private boolean isValidToken(long companyId, String token) {
+		IAMEndPoints iamEP = null;
+		ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<SecurityContext>();
+		JWKSource<SecurityContext> keySource;
+		try {
+			iamEP = new IAMEndPoints(getIAMConfiguration(companyId));
+			keySource = new RemoteJWKSet<SecurityContext>(iamEP.getJwkURI().toURL());
+		} catch(MalformedURLException | ConfigurationException mue) {
+			_log.error("Impossible to access the jwk key");
+			return false;
+		}
+		jwtProcessor.setJWSKeySelector(new JWSVerificationKeySelector<SecurityContext>(JWSAlgorithm.RS256, keySource));
+		JWTClaimsSet claimsSet;
+		try {
+			claimsSet = jwtProcessor.process(token, null);
+		} catch (java.text.ParseException | BadJOSEException | JOSEException e) {
+			_log.error("The following token cannot be parsed: " + token);
+			return false;
+		}
+		return claimsSet.getExpirationTime().after(new Date(System.currentTimeMillis() + (3 * 60 * 1000)));
 	}
 
 	@Reference

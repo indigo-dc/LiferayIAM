@@ -22,6 +22,7 @@
 
 package com.liferay.login.authentication.iam.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -108,7 +109,7 @@ public class IAMLoginAction extends BaseStrutsAction {
 
 				} catch (Exception ex) {
 					_log.error(ex);
-					return null;
+					throw new PortalException("Impossible to authenticate the user");
 				}
 
 				if ((user != null) &&

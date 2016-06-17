@@ -43,9 +43,10 @@ public class TokenServiceWrapper implements TokenService,
 	}
 
 	@Override
-	public java.lang.String getToken()
+	public java.lang.String getToken(
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _tokenService.getToken();
+		return _tokenService.getToken(serviceContext);
 	}
 
 	@Override

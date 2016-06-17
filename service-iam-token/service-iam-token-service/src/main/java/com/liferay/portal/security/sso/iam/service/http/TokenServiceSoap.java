@@ -80,9 +80,11 @@ public class TokenServiceSoap {
 		}
 	}
 
-	public static java.lang.String getToken() throws RemoteException {
+	public static java.lang.String getToken(
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
 		try {
-			java.lang.String returnValue = TokenServiceUtil.getToken();
+			java.lang.String returnValue = TokenServiceUtil.getToken(serviceContext);
 
 			return returnValue;
 		}

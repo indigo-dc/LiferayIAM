@@ -19,32 +19,36 @@
  * the License.
  **********************************************************************
  */
+package com.liferay.portal.security.sso.iam.exception;
 
-package com.liferay.portal.security.sso.iam;
+import com.liferay.portal.kernel.exception.PortalException;
 
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
-import com.liferay.portal.kernel.model.User;
+import aQute.bnd.annotation.ProviderType;
 
 /**
  * @author Marco Fargetta
  */
-public interface IAM {
-	public User addOrUpdateUser(
-			HttpSession session, long companyId, String authorizationCode,
-			String returnRequestUri, List<String> scopes)
-		throws Exception;
+@ProviderType
+public class NoAccessTokenAvailable extends PortalException {
 
-	public String getLoginRedirect(
-			long companyId, String returnRequestUri,
-			List<String> scopes, boolean isRefreshTokenRequested)
-		throws Exception;
+	public NoAccessTokenAvailable() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-	public boolean isEnabled(long companyId);
-	
-	public boolean hasRefreshToken(User user);
+	public NoAccessTokenAvailable(String msg, Throwable cause) {
+		super(msg, cause);
+		// TODO Auto-generated constructor stub
+	}
 
-	public String getUserToken(long userId) throws Exception;
+	public NoAccessTokenAvailable(String msg) {
+		super(msg);
+		// TODO Auto-generated constructor stub
+	}
+
+	public NoAccessTokenAvailable(Throwable cause) {
+		super(cause);
+		// TODO Auto-generated constructor stub
+	}
+
 }

@@ -87,13 +87,15 @@ public class TokenServiceHttp {
 		}
 	}
 
-	public static java.lang.String getToken(HttpPrincipal httpPrincipal)
+	public static java.lang.String getToken(HttpPrincipal httpPrincipal,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(TokenServiceUtil.class,
 					"getToken", _getTokenParameterTypes1);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey);
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					serviceContext);
 
 			Object returnObj = null;
 
@@ -154,7 +156,9 @@ public class TokenServiceHttp {
 	private static final Class<?>[] _getTokenParameterTypes0 = new Class[] {
 			long.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _getTokenParameterTypes1 = new Class[] {  };
+	private static final Class<?>[] _getTokenParameterTypes1 = new Class[] {
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
 	private static final Class<?>[] _getTokenInfoParameterTypes2 = new Class[] {
 			java.lang.String.class,
 			com.liferay.portal.kernel.service.ServiceContext.class

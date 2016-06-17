@@ -19,6 +19,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.security.sso.iam.IAM;
+import com.liferay.portal.security.sso.iam.exception.NoAccessTokenAvailable;
 import com.liferay.portal.security.sso.iam.service.base.TokenServiceBaseImpl;
 import com.liferay.portal.security.sso.iam.service.permission.TokenAccessPermissionChecker;
 
@@ -47,11 +48,22 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
 	 */
 	public String getToken(long userId, ServiceContext serviceContext) throws PortalException {
 		TokenAccessPermissionChecker.check(getPermissionChecker(), userId, serviceContext.getScopeGroupId(), "VIEW");
-	    return "Accesso Token is: Ciccino";
+	    try {
+			String token = iam.getUserToken(userId);
+			return token;
+		} catch (Exception e) {
+			throw new NoAccessTokenAvailable("User " + userId + " has not access token");
+		}
 	}
 	
-	public String getToken() throws PortalException {
-	    return "Accesso Token is: Ciccino";
+	public String getToken(ServiceContext serviceContext) throws PortalException {
+		TokenAccessPermissionChecker.check(getPermissionChecker(), getUserId(), serviceContext.getScopeGroupId(), "VIEW");
+	    try {
+			String token = iam.getUserToken(getUserId());
+			return token;
+		} catch (Exception e) {
+			throw new NoAccessTokenAvailable("User " + getUserId() + " has not access token");
+		}
 	}
 
 	public String getTokenInfo(String token, ServiceContext serviceContext)  throws PortalException {
