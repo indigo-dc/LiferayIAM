@@ -14,6 +14,8 @@
 
 package com.liferay.portal.security.sso.iam.service.base;
 
+import javax.sql.DataSource;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -29,8 +31,6 @@ import com.liferay.portal.security.sso.iam.model.Token;
 import com.liferay.portal.security.sso.iam.service.TokenService;
 import com.liferay.portal.security.sso.iam.service.persistence.TokenPersistence;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-
-import javax.sql.DataSource;
 
 /**
  * Provides the base implementation for the token remote service.

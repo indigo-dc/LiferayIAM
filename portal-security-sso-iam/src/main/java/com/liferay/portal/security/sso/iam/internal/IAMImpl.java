@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.ArrayUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ServiceScope;
 
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
@@ -121,9 +122,6 @@ import net.minidev.json.JSONObject;
 )
 public class IAMImpl implements IAM {
 
-	public IAMImpl() {
-		_log.error("Invoked the IAM service");
-	}
 	@Override
 	public User addOrUpdateUser(HttpSession session, long companyId, String authorizationCode, String returnRequestUri,
 			List<String> scopes) throws Exception {
@@ -239,6 +237,7 @@ public class IAMImpl implements IAM {
 				user.getCompanyId(), User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
 				"iamAccessToken", user.getUserId());
 		token = accessToken.getData();
+		_log.debug("Requested the token for the user " + userId + " and it is " + token);
 		if (!isValidToken(user.getCompanyId(), token)) {
 			token = updateUserToken(user);
 		}

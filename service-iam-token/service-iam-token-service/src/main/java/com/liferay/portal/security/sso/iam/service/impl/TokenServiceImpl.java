@@ -14,14 +14,13 @@
 
 package com.liferay.portal.security.sso.iam.service.impl;
 
-import org.osgi.service.component.annotations.Reference;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.security.sso.iam.IAM;
 import com.liferay.portal.security.sso.iam.exception.NoAccessTokenAvailable;
 import com.liferay.portal.security.sso.iam.service.base.TokenServiceBaseImpl;
 import com.liferay.portal.security.sso.iam.service.permission.TokenAccessPermissionChecker;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -70,10 +69,6 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
 		return null;
 	}
 
-	@Reference(unbind = "-")
-	protected void setIam(IAM iam) {
-		this.iam = iam;
-	}
-
-	private IAM iam;
+	@ServiceReference(type = com.liferay.portal.security.sso.iam.IAM.class)
+	protected IAM iam;
 }
