@@ -1,7 +1,7 @@
 /**
  * *********************************************************************
- * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN), Italy
- * Consorzio COMETA (COMETA), Italy
+ * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN) -
+ * INDIGO-DataCloud
  *
  * See http://www.infn.it and and http://www.consorzio-cometa.it for details on
  * the copyright holders.
@@ -36,11 +36,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.ArrayUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ServiceScope;
 
+import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -56,9 +60,12 @@ import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.settings.CompanyServiceSettingsLocator;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -253,6 +260,55 @@ public class IAMImpl implements IAM {
 		return (Validator.isNotNull(refreshToken) && Validator.isNotNull(refreshToken.getData()));
 	}
 
+	
+	/**
+	 * @see com.liferay.portal.security.sso.iam.IAM#getTokenUser(long, java.lang.String)
+	 */
+	@Override
+	public User getTokenUser(long companyId, String token) throws Exception {
+		if (!isValidToken(companyId, token)) {
+			return null;
+		}
+		ExpandoColumn column = ExpandoColumnLocalServiceUtil.getDefaultTableColumn(companyId, User.class.getName(), "iamAccessToken");
+		DynamicQuery userDynamicQuery = DynamicQueryFactoryUtil.forClass(ExpandoValue.class, PortalClassLoaderUtil.getClassLoader())
+				.add(PropertyFactoryUtil.forName("columnId").eq(GetterUtil.getLong(column.getColumnId())))
+				.add(PropertyFactoryUtil.forName("data").eq(token))
+				.add(PropertyFactoryUtil.forName("classNameId").eq(GetterUtil.getLong(ClassNameLocalServiceUtil.getClassNameId(User.class.getName()))));
+		List<ExpandoValue> expandoList = ExpandoValueLocalServiceUtil.dynamicQuery(userDynamicQuery);
+		
+		if (expandoList.size() == 1) {
+			long userId = expandoList.get(0).getClassPK();
+			return UserLocalServiceUtil.getUserById(userId);
+		}
+		return null;
+	}
+
+	/**
+	 * @see com.liferay.portal.security.sso.iam.IAM#getTokenSubject(long, java.lang.String)
+	 */
+	@Override
+	public String getTokenSubject(long companyId, String token) throws Exception {
+		User user = getTokenUser(companyId, token);
+		if (user == null) {
+			return null;
+		}
+		return getTokenSubject(companyId, user.getUserId());
+	}
+
+	/**
+	 * @see com.liferay.portal.security.sso.iam.IAM#getTokenSubject(long, long)
+	 */
+	@Override
+	public String getTokenSubject(long companyId, long userId) throws Exception {
+		ExpandoValue subjectToken = ExpandoValueLocalServiceUtil.getValue(
+				companyId, User.class.getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
+				"iamUserID", userId);
+		if (subjectToken == null) {
+			return null;
+		}
+		return subjectToken.getData();
+	}
+
 	protected IAMConfiguration getIAMConfiguration(long companyId) {
 		try {
 			return configurationProvider.getConfiguration(
@@ -284,7 +340,6 @@ public class IAMImpl implements IAM {
 			return updateUser(companyId, userLocalService.getUser(values.get(0).getClassPK()),
 					userInfo, bearerAccessToken, refreshToken);
 		}
-
 		try {
 			User user = userLocalService.getUserByEmailAddress(companyId, userInfo.getEmail().toString());
 			session.setAttribute(IAMWebKeys.IAM_USER_EMAIL_ADDRESS, userInfo.getEmail().toString());

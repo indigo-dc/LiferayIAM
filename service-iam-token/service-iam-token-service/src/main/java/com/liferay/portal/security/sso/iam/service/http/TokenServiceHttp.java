@@ -119,8 +119,8 @@ public class TokenServiceHttp {
 		}
 	}
 
-	public static java.lang.String getTokenInfo(HttpPrincipal httpPrincipal,
-		java.lang.String token,
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getTokenInfo(
+		HttpPrincipal httpPrincipal, java.lang.String token,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
@@ -143,7 +143,7 @@ public class TokenServiceHttp {
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
-			return (java.lang.String)returnObj;
+			return (com.liferay.portal.security.sso.iam.model.TokenInfo)returnObj;
 		}
 		catch (com.liferay.portal.kernel.exception.SystemException se) {
 			_log.error(se, se);

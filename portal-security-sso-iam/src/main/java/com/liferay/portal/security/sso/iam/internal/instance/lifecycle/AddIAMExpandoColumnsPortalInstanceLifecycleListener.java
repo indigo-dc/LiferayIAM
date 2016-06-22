@@ -1,7 +1,7 @@
 /**
  * *********************************************************************
- * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN), Italy
- * Consorzio COMETA (COMETA), Italy
+ * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN) -
+ * INDIGO-DataCloud
  *
  * See http://www.infn.it and and http://www.consorzio-cometa.it for details on
  * the copyright holders.
@@ -25,7 +25,6 @@ package com.liferay.portal.security.sso.iam.internal.instance.lifecycle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
@@ -72,6 +71,7 @@ public class AddIAMExpandoColumnsPortalInstanceLifecycleListener
 
 			properties.setProperty(ExpandoColumnConstants.PROPERTY_HIDDEN, "false");
 			properties.setProperty("visible-with-update-permission", "false");
+			properties.setProperty(ExpandoColumnConstants.INDEX_TYPE, Integer.toString(ExpandoColumnConstants.INDEX_TYPE_TEXT));
 
 			addExpandoColumn(expandoTable, "iamUserID", properties);
 			addExpandoColumn(expandoTable, "iamAccessToken", properties);

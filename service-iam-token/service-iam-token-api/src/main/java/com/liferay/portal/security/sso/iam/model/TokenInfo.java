@@ -19,36 +19,63 @@
  * the License.
  **********************************************************************
  */
-package com.liferay.portal.security.sso.iam.exception;
 
-import com.liferay.portal.kernel.exception.PortalException;
+package com.liferay.portal.security.sso.iam.model;
+
+import java.util.List;
+
+import com.liferay.portal.kernel.json.JSON;
 
 import aQute.bnd.annotation.ProviderType;
+
 
 /**
  * @author Marco Fargetta
  */
 @ProviderType
-public class NoAccessTokenAvailable extends PortalException {
+public class TokenInfo {
 
-	public NoAccessTokenAvailable() {
-		super();
-		// TODO Auto-generated constructor stub
+	
+	/**
+	 * @return the error
+	 */
+	public final String getError() {
+		return error;
+	}
+	/**
+	 * @param error the error to set
+	 */
+	public final void setError(String error) {
+		this.error = error;
+	}
+	/**
+	 * @return the subject
+	 */
+	public final String getSubject() {
+		return subject;
+	}
+	/**
+	 * @param subject the subject to set
+	 */
+	public final void setSubject(String subject) {
+		this.subject = subject;
+	}
+	/**
+	 * @return the groups
+	 */
+	@JSON
+	public final List<String> getGroups() {
+		return groups;
+	}
+	/**
+	 * @param groups the groups to set
+	 */
+	public final void setGroups(List<String> groups) {
+		this.groups = groups;
 	}
 
-	public NoAccessTokenAvailable(String msg, Throwable cause) {
-		super(msg, cause);
-		// TODO Auto-generated constructor stub
-	}
 
-	public NoAccessTokenAvailable(String msg) {
-		super(msg);
-		// TODO Auto-generated constructor stub
-	}
-
-	public NoAccessTokenAvailable(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
-
+	private String error;
+	private String subject;
+	private List<String> groups;
 }

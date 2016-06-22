@@ -12,12 +12,12 @@
 		<permissions>
 			<supports>
 				<action-key>VIEW</action-key>
-				<action-key>TOKEN_VALIDATE</action-key>
+				<action-key>TOKEN_INFO</action-key>
 			</supports>			
 			<site-member-defaults />
 			<guest-defaults />
 			<guest-unsupported>
-				<action-key>TOKEN_VALIDATE</action-key>
+				<action-key>TOKEN_INFO</action-key>
 			</guest-unsupported>
 			<owner-defaults>
 				<action-key>VIEW</action-key>

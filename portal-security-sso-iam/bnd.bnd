@@ -4,7 +4,7 @@ Bundle-Name: Liferay Portal Security SSO IAM
 Bundle-Description: SSO module for INDIGO-DC IAM service. The IAM service is integrated using \
 	the OpenID Connect protocol
 Bundle-Category: security, authentication
-Bundle-Copyright: INFN (c) 2016
+Bundle-Copyright: Copyright 2016, INFN - INDIGO-DataCloud
 Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.html
 Export-Package:\
 	com.liferay.portal.security.sso.iam,\

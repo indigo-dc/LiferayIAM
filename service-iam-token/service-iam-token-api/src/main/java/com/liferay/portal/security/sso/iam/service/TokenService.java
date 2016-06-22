@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.security.sso.iam.model.TokenInfo;
 
 /**
  * Provides the remote service interface for Token. Methods of this
@@ -51,6 +52,9 @@ public interface TokenService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link TokenServiceUtil} to access the token remote service. Add custom service methods to {@link com.liferay.portal.security.sso.iam.service.impl.TokenServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public TokenInfo getTokenInfo(java.lang.String token,
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -66,8 +70,4 @@ public interface TokenService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.lang.String getToken(long userId, ServiceContext serviceContext)
 		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getTokenInfo(java.lang.String token,
-		ServiceContext serviceContext) throws PortalException;
 }

@@ -1,7 +1,7 @@
 /**
  * *********************************************************************
- * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN), Italy
- * Consorzio COMETA (COMETA), Italy
+ * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN) -
+ * INDIGO-DataCloud
  *
  * See http://www.infn.it and and http://www.consorzio-cometa.it for details on
  * the copyright holders.
@@ -19,7 +19,6 @@
  * the License.
  **********************************************************************
  */
-
 package com.liferay.portal.security.sso.iam.datasource;
 
 import javax.sql.DataSource;

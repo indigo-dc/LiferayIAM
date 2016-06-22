@@ -1,7 +1,7 @@
 /**
  * *********************************************************************
- * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN), Italy
- * Consorzio COMETA (COMETA), Italy
+ * Copyright (c) 2016: Istituto Nazionale di Fisica Nucleare (INFN) -
+ * INDIGO-DataCloud
  *
  * See http://www.infn.it and and http://www.consorzio-cometa.it for details on
  * the copyright holders.
@@ -47,4 +47,10 @@ public interface IAM {
 	public boolean hasRefreshToken(User user);
 
 	public String getUserToken(long userId) throws Exception;
+	
+	public User getTokenUser(long companyId, String token) throws Exception;
+
+	public String getTokenSubject(long companyId, String token) throws Exception;
+
+	public String getTokenSubject(long companyId, long userId) throws Exception;
 }

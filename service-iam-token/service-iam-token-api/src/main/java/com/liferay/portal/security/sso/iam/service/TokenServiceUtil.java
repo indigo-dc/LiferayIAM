@@ -41,6 +41,12 @@ public class TokenServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.security.sso.iam.service.impl.TokenServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getTokenInfo(
+		java.lang.String token,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getTokenInfo(token, serviceContext);
+	}
 
 	/**
 	* Returns the OSGi service identifier.
@@ -61,12 +67,6 @@ public class TokenServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getToken(userId, serviceContext);
-	}
-
-	public static java.lang.String getTokenInfo(java.lang.String token,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getTokenInfo(token, serviceContext);
 	}
 
 	public static TokenService getService() {

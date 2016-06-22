@@ -32,6 +32,14 @@ public class TokenServiceWrapper implements TokenService,
 		_tokenService = tokenService;
 	}
 
+	@Override
+	public com.liferay.portal.security.sso.iam.model.TokenInfo getTokenInfo(
+		java.lang.String token,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _tokenService.getTokenInfo(token, serviceContext);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -54,13 +62,6 @@ public class TokenServiceWrapper implements TokenService,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _tokenService.getToken(userId, serviceContext);
-	}
-
-	@Override
-	public java.lang.String getTokenInfo(java.lang.String token,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _tokenService.getTokenInfo(token, serviceContext);
 	}
 
 	@Override

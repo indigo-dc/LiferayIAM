@@ -932,7 +932,6 @@ public class TokenPersistenceImpl extends BasePersistenceImpl<Token>
 		Serializable serializable = entityCache.getResult(TokenModelImpl.ENTITY_CACHE_ENABLED,
 				TokenImpl.class, primaryKey);
 
-
 		Token token = (Token)serializable;
 
 		if (token == null) {

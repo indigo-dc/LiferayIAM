@@ -95,11 +95,12 @@ public class TokenServiceSoap {
 		}
 	}
 
-	public static java.lang.String getTokenInfo(java.lang.String token,
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getTokenInfo(
+		java.lang.String token,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			java.lang.String returnValue = TokenServiceUtil.getTokenInfo(token,
+			com.liferay.portal.security.sso.iam.model.TokenInfo returnValue = TokenServiceUtil.getTokenInfo(token,
 					serviceContext);
 
 			return returnValue;
