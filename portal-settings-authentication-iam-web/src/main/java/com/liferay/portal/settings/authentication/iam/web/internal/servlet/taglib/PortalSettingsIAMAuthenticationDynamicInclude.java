@@ -19,7 +19,8 @@
  * the License.
  **********************************************************************
  */
-package com.liferay.portal.settings.authentication.iam.web.internal.servlet.taglib;
+package com.liferay.portal.settings.authentication.iam.web.internal.servlet.
+    taglib;
 
 import javax.servlet.ServletContext;
 
@@ -35,31 +36,36 @@ import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
  * @author Marco Fargetta
  */
 @Component(
-	immediate = true,
-	property = {"portal.settings.authentication.tabs.name=iam"},
-	service = DynamicInclude.class
-)
-public class PortalSettingsIAMAuthenticationDynamicInclude extends BaseJSPDynamicInclude {
+        immediate = true,
+        property = { "portal.settings.authentication.tabs.name=iam" },
+        service = DynamicInclude.class)
+public class PortalSettingsIAMAuthenticationDynamicInclude extends
+        BaseJSPDynamicInclude {
 
-	@Override
-	protected String getJspPath() {
-		return "/com.liferay.portal.settings.web/iam.jsp";
-	}
+    @Override
+    protected final String getJspPath() {
+        return "/com.liferay.portal.settings.web/iam.jsp";
+    }
 
-	@Override
-	protected Log getLog() {
-		return _log;
-	}
+    @Override
+    protected final Log getLog() {
+        return log;
+    }
 
-	@Override
-	@Reference (
-		target = "(osgi.web.symbolicname=com.liferay.portal.settings.authentication.iam.web)",
-		unbind = "-"
-	)	
-	protected void setServletContext(ServletContext servletContext) {
-		super.setServletContext(servletContext);
-	}
-	
-	private static final Log _log = LogFactoryUtil.getLog(
-			PortalSettingsIAMAuthenticationDynamicInclude.class);
+    @Override
+    @Reference(
+            target =
+                "(osgi.web.symbolicname=com.liferay.portal.settings."
+                        + "authentication.iam.web)",
+            unbind = "-")
+    protected final void setServletContext(
+            final ServletContext servletContext) {
+        super.setServletContext(servletContext);
+    }
+
+    /**
+     * The logger.
+     */
+    private final Log log = LogFactoryUtil.getLog(
+            PortalSettingsIAMAuthenticationDynamicInclude.class);
 }

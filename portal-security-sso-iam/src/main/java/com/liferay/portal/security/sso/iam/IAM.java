@@ -29,28 +29,126 @@ import javax.servlet.http.HttpSession;
 import com.liferay.portal.kernel.model.User;
 
 /**
+ * IAM component used by all IAM related plug-in to access user information.
+ *
  * @author Marco Fargetta
  */
 public interface IAM {
-	public User addOrUpdateUser(
-			HttpSession session, long companyId, String authorizationCode,
-			String returnRequestUri, List<String> scopes)
-		throws Exception;
+    /**
+     * Add or update user.
+     *
+     * Using the authorisation code released by IAM retrieves the id token, the
+     * access token and eventually the refresh token. Then it connect with the
+     * user info endpoint to get user information and create the account or
+     * liferay, or if the user exist the related information are updated.
+     *
+     * @param session
+     *            Current session
+     * @param companyId
+     *            Company Id
+     * @param authorizationCode
+     *            IAM authorisation code
+     * @param returnRequestUri
+     *            URI where the user is redirect after the authentication
+     * @param scopes
+     *            The list of requested scopes
+     *
+     * @return The user
+     * @throws Exception
+     *             If there are problem to authenticate or identify the user
+     */
+    User addOrUpdateUser(HttpSession session, long companyId,
+            String authorizationCode, String returnRequestUri,
+            List<String> scopes) throws Exception;
 
-	public String getLoginRedirect(
-			long companyId, String returnRequestUri,
-			List<String> scopes, boolean isRefreshTokenRequested)
-		throws Exception;
+    /**
+     * Get the IAM URL where the user has to be re-direct
+     * for the authentication.
+     *
+     * @param companyId
+     *            Company Id
+     * @param returnRequestUri
+     *            URI where the user is redirect after the authentication
+     * @param scopes
+     *            The list of requested scopes
+     * @param isRefreshTokenRequested
+     *            True if the associated user has not a refresh token, false
+     *            otherwise
+     * @return The URL
+     * @throws Exception
+     *             If there is a configuration problem
+     */
+    String getLoginRedirect(long companyId, String returnRequestUri,
+            List<String> scopes, boolean isRefreshTokenRequested)
+            throws Exception;
 
-	public boolean isEnabled(long companyId);
-	
-	public boolean hasRefreshToken(User user);
+    /**
+     * Verifies if the IAM authentication is enabled.
+     *
+     * @param companyId
+     *            Company Id
+     * @return True if enabled, false otherwise
+     */
+    boolean isEnabled(long companyId);
 
-	public String getUserToken(long userId) throws Exception;
-	
-	public User getTokenUser(long companyId, String token) throws Exception;
+    /**
+     * Verifies if the user has a refresh token.
+     *
+     * @param user
+     *            The user
+     * @return True if present, false otherwise
+     */
+    boolean hasRefreshToken(User user);
 
-	public String getTokenSubject(long companyId, String token) throws Exception;
+    /**
+     * Retrieves the user access token. If the token is not valid it is updated
+     * using the refresh token.
+     *
+     * @param userId
+     *            The user Id
+     * @return The user access token
+     * @throws Exception
+     *             If the token cannot be created using the refresh token
+     */
+    String getUserToken(long userId) throws Exception;
 
-	public String getTokenSubject(long companyId, long userId) throws Exception;
+    /**
+     * Retrieves the user information. Identify the user associated with a valid
+     * access token
+     *
+     * @param companyId
+     *            Company Id
+     * @param token
+     *            The token
+     * @return The user
+     * @throws Exception
+     *             No user associated with the token
+     */
+    User getTokenUser(long companyId, String token) throws Exception;
+
+    /**
+     * Retrieves the subject associated with the token.
+     *
+     * @param companyId
+     *            Company Id
+     * @param token
+     *            The token
+     * @return The subject
+     * @throws Exception
+     *             Impossible read the token
+     */
+    String getTokenSubject(long companyId, String token) throws Exception;
+
+    /**
+     * Retrieves the subject of the user.
+     *
+     * @param companyId
+     *            Company Id
+     * @param userId
+     *            The user
+     * @return The subject
+     * @throws Exception
+     *             User has not subject
+     */
+    String getTokenSubject(long companyId, long userId) throws Exception;
 }

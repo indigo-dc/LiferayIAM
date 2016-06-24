@@ -57,158 +57,193 @@ import org.osgi.service.component.annotations.Reference;
  * @author Marco Fargetta
  */
 @Component(
-	immediate = true,
-	property = {
-		"path=/portal/iam_openidconnect"
-	},
-	service = StrutsAction.class
-)
+        immediate = true,
+        property = {"path=/portal/iam_openidconnect" },
+        service = StrutsAction.class)
 public class IAMLoginAction extends BaseStrutsAction {
 
-	@Override
-	public String execute(
-			HttpServletRequest request, HttpServletResponse response)
-					throws Exception {
-		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(
-				WebKeys.THEME_DISPLAY);
+    @Override
+    public final String execute(final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(
+                WebKeys.THEME_DISPLAY);
 
-		if (!iam.isEnabled(themeDisplay.getCompanyId())) {
-			throw new PrincipalException.MustBeEnabled(
-					themeDisplay.getCompanyId(),
-					IAM.class.getName());
-		}
-		String cmd = ParamUtil.getString(request, Constants.CMD);
-		if (cmd.equals("login")) {
-			String returnRequestUri = getReturnRequestUri(request);
+        if (!iam.isEnabled(themeDisplay.getCompanyId())) {
+            throw new PrincipalException.MustBeEnabled(themeDisplay
+                    .getCompanyId(), IAM.class.getName());
+        }
+        String cmd = ParamUtil.getString(request, Constants.CMD);
+        if (cmd.equals("login")) {
+            String returnRequestUri = getReturnRequestUri(request);
 
-			String loginRedirect = iam.getLoginRedirect(
-				themeDisplay.getCompanyId(), returnRequestUri, _scopesLogin, false);
+            String loginRedirect = iam.getLoginRedirect(themeDisplay
+                    .getCompanyId(), returnRequestUri, SCOPES_LOGIN, false);
 
-			response.sendRedirect(loginRedirect);
-		}
-		else if (cmd.equals("token")) {
-			HttpSession session = request.getSession();
+            response.sendRedirect(loginRedirect);
+        } else if (cmd.equals("token")) {
+            HttpSession session = request.getSession();
 
-			String authorizationCode = ParamUtil.getString(request, "code");
+            String authorizationCode = ParamUtil.getString(request, "code");
 
-			if (Validator.isNotNull(authorizationCode)) {
-				String returnRequestUri = getReturnRequestUri(request);
+            if (Validator.isNotNull(authorizationCode)) {
+                String returnRequestUri = getReturnRequestUri(request);
 
-				User user = null;
-				try {
-					user = iam.addOrUpdateUser(
-						session, themeDisplay.getCompanyId(), authorizationCode,
-						returnRequestUri, _scopesLogin);
-					if (!iam.hasRefreshToken(user)) {
-						String loginRedirect = iam.getLoginRedirect(
-							themeDisplay.getCompanyId(), returnRequestUri, _scopesLogin, true);
+                User user = null;
+                try {
+                    user = iam.addOrUpdateUser(session, themeDisplay
+                            .getCompanyId(), authorizationCode,
+                            returnRequestUri, SCOPES_LOGIN);
+                    if (!iam.hasRefreshToken(user)) {
+                        String loginRedirect = iam.getLoginRedirect(
+                                themeDisplay.getCompanyId(), returnRequestUri,
+                                SCOPES_LOGIN, true);
 
-						response.sendRedirect(loginRedirect);
-						return super.execute(request, response);						
-					}
+                        response.sendRedirect(loginRedirect);
+                        return super.execute(request, response);
+                    }
 
-				} catch (Exception ex) {
-					_log.error(ex);
-					throw new PortalException("Impossible to authenticate the user");
-				}
+                } catch (Exception ex) {
+                    log.error(ex);
+                    throw new PortalException(
+                            "Impossible to authenticate the user");
+                }
 
-				if ((user != null) &&
-					(user.getStatus() == WorkflowConstants.STATUS_INCOMPLETE)) {
+                if ((user != null) && (user
+                        .getStatus() == WorkflowConstants.STATUS_INCOMPLETE)) {
 
-					sendUpdateAccountRedirect(request, response, user);
+                    sendUpdateAccountRedirect(request, response, user);
 
-					return null;
-				}
+                    return null;
+                }
 
-				sendLoginRedirect(request, response);
+                sendLoginRedirect(request, response);
 
-				return null;
-			}
+                return null;
+            }
 
-			String error = ParamUtil.getString(request, "error");
+            String error = ParamUtil.getString(request, "error");
 
-			if (error.equals("access_denied")) {
-				sendLoginRedirect(request, response);
+            if (Validator.isNotNull(error) && error.equals("access_denied")) {
+                sendLoginRedirect(request, response);
 
-				return null;
-			}
-		}
-		return super.execute(request, response);
-	}
+                return null;
+            }
+        }
+        return super.execute(request, response);
+    }
 
-	protected void sendLoginRedirect(
-			HttpServletRequest request, HttpServletResponse response)
-		throws Exception {
+    /**
+     * Send the user to the page after login.
+     *
+     * @param request The servlet request
+     * @param response The servlet response
+     * @throws Exception If the user cannot be redirect
+     */
+    protected final void sendLoginRedirect(final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
+        ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(
+                WebKeys.THEME_DISPLAY);
 
-		PortletURL portletURL = PortletURLFactoryUtil.create(
-			request, PortletKeys.LOGIN, themeDisplay.getPlid(),
-			PortletRequest.RENDER_PHASE);
+        PortletURL portletURL = PortletURLFactoryUtil.create(request,
+                PortletKeys.LOGIN, themeDisplay.getPlid(),
+                PortletRequest.RENDER_PHASE);
 
-		portletURL.setParameter(
-			"mvcRenderCommandName", "/login/login_redirect");
-		portletURL.setWindowState(LiferayWindowState.POP_UP);
+        portletURL.setParameter("mvcRenderCommandName",
+                "/login/login_redirect");
+        portletURL.setWindowState(LiferayWindowState.POP_UP);
 
-		response.sendRedirect(portletURL.toString());
-	}
+        response.sendRedirect(portletURL.toString());
+    }
 
-	protected void sendUpdateAccountRedirect(
-			HttpServletRequest request, HttpServletResponse response, User user)
-		throws Exception {
+    /**
+     * Send the user to the update account page.
+     *
+     * @param request The servlet request
+     * @param response The servlet response
+     * @param user The user to update
+     * @throws Exception If the update page cannot be created
+     */
+    protected final void sendUpdateAccountRedirect(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final User user) throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
+        ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(
+                WebKeys.THEME_DISPLAY);
 
-		PortletURL portletURL = PortletURLFactoryUtil.create(
-			request, PortletKeys.LOGIN, themeDisplay.getPlid(),
-			PortletRequest.RENDER_PHASE);
+        PortletURL portletURL = PortletURLFactoryUtil.create(request,
+                PortletKeys.LOGIN, themeDisplay.getPlid(),
+                PortletRequest.RENDER_PHASE);
 
-		portletURL.setParameter("saveLastPath", Boolean.FALSE.toString());
-		portletURL.setParameter(
-			"mvcRenderCommandName", "/login/associate_iam_user");
+        portletURL.setParameter("saveLastPath", Boolean.FALSE.toString());
+        portletURL.setParameter("mvcRenderCommandName",
+                "/login/associate_iam_user");
 
-		PortletURL redirectURL = PortletURLFactoryUtil.create(
-			request, PortletKeys.LOGIN, themeDisplay.getPlid(),
-			PortletRequest.RENDER_PHASE);
+        PortletURL redirectURL = PortletURLFactoryUtil.create(request,
+                PortletKeys.LOGIN, themeDisplay.getPlid(),
+                PortletRequest.RENDER_PHASE);
 
-		redirectURL.setParameter(
-			"mvcRenderCommandName", "/login/login_redirect");
-		redirectURL.setParameter("emailAddress", user.getEmailAddress());
-		redirectURL.setParameter("anonymousUser", Boolean.FALSE.toString());
-		redirectURL.setPortletMode(PortletMode.VIEW);
-		redirectURL.setWindowState(LiferayWindowState.POP_UP);
+        redirectURL.setParameter("mvcRenderCommandName",
+                "/login/login_redirect");
+        redirectURL.setParameter("emailAddress", user.getEmailAddress());
+        redirectURL.setParameter("anonymousUser", Boolean.FALSE.toString());
+        redirectURL.setPortletMode(PortletMode.VIEW);
+        redirectURL.setWindowState(LiferayWindowState.POP_UP);
 
-		portletURL.setParameter("redirect", redirectURL.toString());
+        portletURL.setParameter("redirect", redirectURL.toString());
 
-		portletURL.setParameter("userId", String.valueOf(user.getUserId()));
-		portletURL.setParameter("emailAddress", user.getEmailAddress());
-		portletURL.setParameter("firstName", user.getFirstName());
-		portletURL.setParameter("lastName", user.getLastName());
-		portletURL.setPortletMode(PortletMode.VIEW);
-		portletURL.setWindowState(LiferayWindowState.POP_UP);
+        portletURL.setParameter("userId", String.valueOf(user.getUserId()));
+        portletURL.setParameter("emailAddress", user.getEmailAddress());
+        portletURL.setParameter("firstName", user.getFirstName());
+        portletURL.setParameter("lastName", user.getLastName());
+        portletURL.setPortletMode(PortletMode.VIEW);
+        portletURL.setWindowState(LiferayWindowState.POP_UP);
 
-		response.sendRedirect(portletURL.toString());
-	}
+        response.sendRedirect(portletURL.toString());
+    }
 
-	protected String getReturnRequestUri(HttpServletRequest request) {
-		return PortalUtil.getPortalURL(request) + PortalUtil.getPathMain() +
-			_REDIRECT_URI;
-	}
+    /**
+     * Retrieves the URI to send the user after authentication on IAM.
+     *
+     * @param request The servlet request
+     * @return The URI
+     */
+    protected final String getReturnRequestUri(
+            final HttpServletRequest request) {
+        return PortalUtil.getPortalURL(request) + PortalUtil.getPathMain()
+                + REDIRECT_URI;
+    }
 
-	@Reference(unbind = "-")
-	protected void setIam(IAM iam) {
-		this.iam = iam;
-	}
+    /**
+     * Sets the iam component.
+     *
+     * @param iamComp The iam component
+     */
+    @Reference(unbind = "-")
+    protected final void setIam(final IAM iamComp) {
+        this.iam = iamComp;
+    }
 
-	private static final String _REDIRECT_URI =
-			"/portal/iam_openidconnect?cmd=token";
+    /**
+     * The redirect URI part of the portlet.
+     */
+    private static final String REDIRECT_URI =
+            "/portal/iam_openidconnect?cmd=token";
 
-	private static final List<String> _scopesLogin = Arrays.asList(
-		"openid", "profile", "email");
-	
-	private IAM iam;
+    /**
+     * Login scopes for the OpenIDConnect.
+     */
+    private static final List<String> SCOPES_LOGIN = Arrays.asList("openid",
+            "profile", "email");
 
-	private static final Log _log = LogFactoryUtil.getLog(
-			IAMLoginAction.class);}
+    /**
+     * The iam component.
+     */
+    private IAM iam;
+
+    /**
+     * The logger.
+     */
+    private final Log log = LogFactoryUtil.getLog(IAMLoginAction.class);
+}

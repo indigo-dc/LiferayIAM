@@ -24,19 +24,18 @@ import com.liferay.portal.kernel.exception.NoSuchModelException;
 @ProviderType
 public class NoSuchTokenException extends NoSuchModelException {
 
-	public NoSuchTokenException() {
-	}
+    public NoSuchTokenException() {
+    }
 
-	public NoSuchTokenException(String msg) {
-		super(msg);
-	}
+    public NoSuchTokenException(String msg) {
+        super(msg);
+    }
 
-	public NoSuchTokenException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    public NoSuchTokenException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
-	public NoSuchTokenException(Throwable cause) {
-		super(cause);
-	}
-
+    public NoSuchTokenException(Throwable cause) {
+        super(cause);
+    }
 }

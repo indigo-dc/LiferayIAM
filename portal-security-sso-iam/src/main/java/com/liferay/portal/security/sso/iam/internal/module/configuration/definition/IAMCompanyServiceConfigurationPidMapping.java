@@ -20,7 +20,8 @@
  **********************************************************************
  */
 
-package com.liferay.portal.security.sso.iam.internal.module.configuration.definition;
+package com.liferay.portal.security.sso.iam.internal.module.
+    configuration.definition;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -32,17 +33,17 @@ import com.liferay.portal.security.sso.iam.constants.IAMConstants;
  * @author Marco Fargetta
  */
 @Component
-public class IAMCompanyServiceConfigurationPidMapping
-	implements ConfigurationPidMapping{
+public class IAMCompanyServiceConfigurationPidMapping implements
+        ConfigurationPidMapping {
 
-	@Override
-	public Class<?> getConfigurationBeanClass() {
-		return IAMConfiguration.class;
-	}
+    @Override
+    public final Class<?> getConfigurationBeanClass() {
+        return IAMConfiguration.class;
+    }
 
-	@Override
-	public String getConfigurationPid() {
-		return IAMConstants.SERVICE_NAME;
-	}
+    @Override
+    public final String getConfigurationPid() {
+        return IAMConstants.SERVICE_NAME;
+    }
 
 }

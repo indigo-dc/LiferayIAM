@@ -20,23 +20,25 @@
  **********************************************************************
  */
 
-package com.liferay.portal.security.sso.iam.internal.module.configuration.definition;
+package com.liferay.portal.security.sso.iam.internal.module.
+    configuration.definition;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.liferay.portal.kernel.settings.definition.ConfigurationBeanDeclaration;
+import com.liferay.portal.kernel.settings.definition.
+    ConfigurationBeanDeclaration;
 import com.liferay.portal.security.sso.iam.configuration.IAMConfiguration;
 
 /**
  * @author Marco Fargetta
  */
 @Component
-public class IAMCompanyServiceConfigurationBeanDeclaration
-	implements ConfigurationBeanDeclaration {
+public class IAMCompanyServiceConfigurationBeanDeclaration implements
+        ConfigurationBeanDeclaration {
 
-	@Override
-	public Class<?> getConfigurationBeanClass() {
-		return IAMConfiguration.class;
-	}
+    @Override
+    public final Class<?> getConfigurationBeanClass() {
+        return IAMConfiguration.class;
+    }
 
 }

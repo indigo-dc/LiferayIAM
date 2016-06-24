@@ -26,29 +26,46 @@ import com.liferay.portal.kernel.exception.PortalException;
 import aQute.bnd.annotation.ProviderType;
 
 /**
+ * The access token is not valid and cannot be retrieved a new token.
+ *
  * @author Marco Fargetta
  */
 @ProviderType
 public class NoAccessTokenAvailable extends PortalException {
 
-	public NoAccessTokenAvailable() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * Empty exception.
+     */
+    public NoAccessTokenAvailable() {
+        super();
+    }
 
-	public NoAccessTokenAvailable(String msg, Throwable cause) {
-		super(msg, cause);
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * Exception with message and cause.
+     *
+     * @param msg The message
+     * @param cause The cause
+     */
+    public NoAccessTokenAvailable(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
 
-	public NoAccessTokenAvailable(String msg) {
-		super(msg);
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * Exception with message.
+     *
+     * @param msg The message
+     */
+    public NoAccessTokenAvailable(final String msg) {
+        super(msg);
+    }
 
-	public NoAccessTokenAvailable(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * Exception with cause.
+     *
+     * @param cause The cause
+     */
+    public NoAccessTokenAvailable(final Throwable cause) {
+        super(cause);
+    }
 
 }

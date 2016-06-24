@@ -41,144 +41,227 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import com.nimbusds.openid.connect.sdk.validators.IDTokenValidator;
 
 /**
+ * IAM endpoint manager.
+ * The IAMEndPoints configuration reads the IAM end points from the
+ * configuration. If the configuration URL is provided all the other URL are
+ * discarded and the correct information are retrieved from the IAM service.
+ *
  * @author Marco Fargetta
  */
 public class IAMEndPoints {
-	public IAMEndPoints(IAMConfiguration iamConf) throws ConfigurationException {
+    /**
+     * Builds the end points from the configuration.
+     *
+     * @param iamConf The IAM configuration
+     * @throws ConfigurationException The configuration is not correct or the
+     * provided values are incorrect
+     */
+    public IAMEndPoints(final IAMConfiguration iamConf)
+            throws ConfigurationException {
 
-		try {
-			oidcMeta = getMetadata(iamConf);
-		} catch (Exception ex) {
-			_log.error("IAM Configuration URL '" + iamConf.configurationURL()
-				+ "' is not reachable");	
-		}
-		if (oidcMeta != null) {
-			authURI = oidcMeta.getAuthorizationEndpointURI();
-			tokenURI = oidcMeta.getTokenEndpointURI();
-			jwkURI = oidcMeta.getJWKSetURI();
-			userInfo = oidcMeta.getUserInfoEndpointURI();
-			issuer = oidcMeta.getIssuer();
-			try {
-			validator = new IDTokenValidator(
-					oidcMeta.getIssuer(),
-					new ClientID(iamConf.appId()),
-					JWSAlgorithm.RS256,
-					oidcMeta.getJWKSetURI().toURL());
-			} catch (MalformedURLException mue) {
-				throw new ConfigurationException("JWK URI publication errror");
-			}
-		} else {
-			if (Validator.isNull(iamConf.oauthAuthURL()) || Validator.isNull(iamConf.oauthTokenURL()) || Validator.isNull(iamConf.openidJwkURL())) {
-				throw new ConfigurationException("IAM Authentication is not properly configured. Authentication cannot proceed");
-			}
-			issuer = new Issuer(iamConf.openidIssuer());
-			try {
-				authURI = new URI(iamConf.oauthAuthURL());
-				tokenURI = new URI(iamConf.oauthTokenURL());
-				jwkURI = new URI(iamConf.openidJwkURL());
-				userInfo = new URI(iamConf.openidUserinfoURL());
-				validator = new IDTokenValidator(issuer,
-						new ClientID(iamConf.appId()),
-						JWSAlgorithm.RS256,
-						jwkURI.toURL());
-			} catch(URISyntaxException use) {
-				throw new ConfigurationException("IAM Authentication is not properly configured. Authentication cannot proceed");
-			} catch(MalformedURLException mue) {
-				throw new ConfigurationException("JWK URL is not properly configured");
-			}
-			
-		}		
-		clientID = new ClientID(iamConf.appId());
-		secret = new Secret(iamConf.appSecret());
-	}
+        try {
+            oidcMeta = getMetadata(iamConf);
+        } catch (Exception ex) {
+            log.error("IAM Configuration URL '" + iamConf.configurationURL()
+                    + "' is not reachable");
+        }
+        if (oidcMeta != null) {
+            authURI = oidcMeta.getAuthorizationEndpointURI();
+            tokenURI = oidcMeta.getTokenEndpointURI();
+            jwkURI = oidcMeta.getJWKSetURI();
+            userInfo = oidcMeta.getUserInfoEndpointURI();
+            issuer = oidcMeta.getIssuer();
+            try {
+                validator = new IDTokenValidator(oidcMeta.getIssuer(),
+                        new ClientID(iamConf.appId()), JWSAlgorithm.RS256,
+                        oidcMeta.getJWKSetURI().toURL());
+            } catch (MalformedURLException mue) {
+                throw new ConfigurationException("JWK URI publication errror");
+            }
+        } else {
+            if (Validator.isNull(iamConf.oauthAuthURL()) || Validator.isNull(
+                    iamConf.oauthTokenURL()) || Validator.isNull(iamConf
+                            .openidJwkURL())) {
+                throw new ConfigurationException(
+                        "IAM Authentication is not properly configured. "
+                        + "Authentication cannot proceed");
+            }
+            issuer = new Issuer(iamConf.openidIssuer());
+            try {
+                authURI = new URI(iamConf.oauthAuthURL());
+                tokenURI = new URI(iamConf.oauthTokenURL());
+                jwkURI = new URI(iamConf.openidJwkURL());
+                userInfo = new URI(iamConf.openidUserinfoURL());
+                validator = new IDTokenValidator(issuer, new ClientID(iamConf
+                        .appId()), JWSAlgorithm.RS256, jwkURI.toURL());
+            } catch (URISyntaxException use) {
+                throw new ConfigurationException(
+                        "IAM Authentication is not properly configured. "
+                        + "Authentication cannot proceed");
+            } catch (MalformedURLException mue) {
+                throw new ConfigurationException(
+                        "JWK URL is not properly configured");
+            }
 
-	private OIDCProviderMetadata getMetadata(IAMConfiguration iamConf) throws Exception {
-		if (Validator.isNull(iamConf.configurationURL())) {
-			return null;
-		}
-		URL configurationURL = new URL(iamConf.configurationURL());
-		InputStream stream = configurationURL.openStream();
-		String info = null;
-		try (java.util.Scanner s = new java.util.Scanner(stream)) {
-			info = s.useDelimiter("\\A").hasNext() ? s.next() : "";
-		}
-		return OIDCProviderMetadata.parse(info);
-	}
+        }
+        clientID = new ClientID(iamConf.appId());
+        secret = new Secret(iamConf.appSecret());
+    }
 
-	
-	
-	/**
-	 * @return the oidcMeta
-	 */
-	public final OIDCProviderMetadata getOidcMeta() {
-		return oidcMeta;
-	}
+    /**
+     * Retrieves metadata from the configuration URL.
+     *
+     * @param iamConf IAM configuration
+     * @return The metadata
+     * @throws Exception If configuration URL does not work or the provided
+     * information are not correct
+     */
+    private OIDCProviderMetadata getMetadata(final IAMConfiguration iamConf)
+            throws Exception {
+        if (Validator.isNull(iamConf.configurationURL())) {
+            return null;
+        }
+        URL configurationURL = new URL(iamConf.configurationURL());
+        InputStream stream = configurationURL.openStream();
+        String info = null;
+        try (java.util.Scanner s = new java.util.Scanner(stream)) {
+            if (s.useDelimiter("\\A").hasNext()) {
+                info = s.next();
+            } else {
+                info = "";
+            }
+        }
+        return OIDCProviderMetadata.parse(info);
+    }
 
-	/**
-	 * @return the tokenURI
-	 */
-	public final URI getTokenURI() {
-		return tokenURI;
-	}
+    /**
+     * Retrieve the OAuth metadata.
+     *
+     * @return The oidcMeta
+     */
+    public final OIDCProviderMetadata getOidcMeta() {
+        return oidcMeta;
+    }
 
-	/**
-	 * @return the jwkURI
-	 */
-	public final URI getJwkURI() {
-		return jwkURI;
-	}
+    /**
+     * Retrieve The OAuth token URI.
+     *
+     * @return The tokenURI
+     */
+    public final URI getTokenURI() {
+        return tokenURI;
+    }
 
-	/**
-	 * @return the userInfo
-	 */
-	public final URI getUserInfo() {
-		return userInfo;
-	}
+    /**
+     * Retrieve The OAuth JWK URI.
+     *
+     * @return The jwkURI
+     */
+    public final URI getJwkURI() {
+        return jwkURI;
+    }
 
-	/**
-	 * @return the issuer
-	 */
-	public final Issuer getIssuer() {
-		return issuer;
-	}
+    /**
+     * Retrieve the OAuth user info URI.
+     *
+     * @return The userInfo
+     */
+    public final URI getUserInfo() {
+        return userInfo;
+    }
 
-	/**
-	 * @return the clientID
-	 */
-	public final ClientID getClientID() {
-		return clientID;
-	}
+    /**
+     * Retrieve the OAuth issuer.
+     *
+     * @return The issuer
+     */
+    public final Issuer getIssuer() {
+        return issuer;
+    }
 
-	/**
-	 * @return the secret
-	 */
-	public final Secret getSecret() {
-		return secret;
-	}
+    /**
+     * Retrieve the OAuth client identifier.
+     *
+     * @return The clientID
+     */
+    public final ClientID getClientID() {
+        return clientID;
+    }
 
-	/**
-	 * @return the validator
-	 */
-	public final IDTokenValidator getValidator() {
-		return validator;
-	}
+    /**
+     * Retrieve the OAuth client secret.
+     *
+     * @return The secret
+     */
+    public final Secret getSecret() {
+        return secret;
+    }
 
-	/**
-	 * @return the authURI
-	 */
-	public final URI getAuthURI() {
-		return authURI;
-	}
+    /**
+     * Retrieve the OAuth token validator.
+     *
+     * @return The validator
+     */
+    public final IDTokenValidator getValidator() {
+        return validator;
+    }
 
-	private OIDCProviderMetadata oidcMeta = null;
-	private URI authURI = null;
-	private URI tokenURI = null;
-	private URI jwkURI = null;
-	private URI userInfo = null;
-	private Issuer issuer = null;
-	private ClientID clientID = null;
-	private Secret secret = null;
-	private IDTokenValidator validator = null;
-	private static final Log _log = LogFactoryUtil.getLog(
-			IAMEndPoints.class);
+    /**
+     * Retrieve the OAuth authentication URI.
+     *
+     * @return The authURI
+     */
+    public final URI getAuthURI() {
+        return authURI;
+    }
+
+    /**
+     * The OAuth metadata.
+     */
+    private OIDCProviderMetadata oidcMeta = null;
+
+    /**
+     * The OAuth authentication URI.
+     */
+    private URI authURI = null;
+
+    /**
+     * The OAuth token URI.
+     */
+    private URI tokenURI = null;
+
+    /**
+     * The OAuth JWK URI.
+     */
+    private URI jwkURI = null;
+
+    /**
+     * The OAuth user info uri.
+     */
+    private URI userInfo = null;
+
+    /**
+     * The OAuth issuer.
+     */
+    private Issuer issuer = null;
+
+    /**
+     * The OAuth client identifier.
+     */
+    private ClientID clientID = null;
+
+    /**
+     * The OAuth client secret.
+     */
+    private Secret secret = null;
+
+    /**
+     * The OAuth token validator.
+     */
+    private IDTokenValidator validator = null;
+
+    /**
+     * The logger.
+     */
+    private final Log log = LogFactoryUtil.getLog(IAMEndPoints.class);
 }

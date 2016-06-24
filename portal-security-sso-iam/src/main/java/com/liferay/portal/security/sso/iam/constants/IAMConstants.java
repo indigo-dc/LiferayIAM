@@ -25,7 +25,16 @@ package com.liferay.portal.security.sso.iam.constants;
 /**
  * @author Marco Fargetta
  */
-public class IAMConstants {
-	public static final String SERVICE_NAME =
-			"com.liferay.portal.security.sso.iam";
+public final class IAMConstants {
+    /**
+     * Service name in OSGi.
+     */
+    public static final String SERVICE_NAME =
+            "com.liferay.portal.security.sso.iam";
+
+    /**
+     * Default constructor to avoid instances.
+     */
+    private IAMConstants() {
+    }
 }

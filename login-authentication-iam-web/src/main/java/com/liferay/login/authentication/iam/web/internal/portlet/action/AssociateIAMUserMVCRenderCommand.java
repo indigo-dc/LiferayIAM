@@ -45,60 +45,84 @@ import com.liferay.portal.security.sso.iam.IAM;
  * @author Marco Fargetta
  */
 @Component(
-	immediate = true,
-	property = {
-		"javax.portlet.name=" + PortletKeys.FAST_LOGIN,
-		"javax.portlet.name=" + PortletKeys.LOGIN,
-		"mvc.command.name=/login/associate_iam_user"
-	},
-	service = MVCRenderCommand.class
-)
+        immediate = true,
+        property = {
+                "javax.portlet.name=" + PortletKeys.FAST_LOGIN,
+                "javax.portlet.name=" + PortletKeys.LOGIN,
+                "mvc.command.name=/login/associate_iam_user" },
+        service = MVCRenderCommand.class)
 public class AssociateIAMUserMVCRenderCommand implements MVCRenderCommand {
 
-	@Override
-	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
+    @Override
+    public final String render(final RenderRequest renderRequest,
+            final RenderResponse renderResponse) throws PortletException {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(
+                WebKeys.THEME_DISPLAY);
 
-		if (!iam.isEnabled(themeDisplay.getCompanyId())) {
-			throw new PortletException(
-				new PrincipalException.MustBeEnabled(
-					themeDisplay.getCompanyId(),
-					IAMLoginAction.class.getName()));
-		}
+        if (!iam.isEnabled(themeDisplay.getCompanyId())) {
+            throw new PortletException(new PrincipalException.MustBeEnabled(
+                    themeDisplay.getCompanyId(), IAMLoginAction.class
+                            .getName()));
+        }
 
-		long iamIncompleteUserId = ParamUtil.getLong(
-			renderRequest, "userId");
+        long iamIncompleteUserId = ParamUtil.getLong(renderRequest, "userId");
 
-		if (!Validator.isNull(iamIncompleteUserId)) {
-			User user = userLocalService.fetchUser(iamIncompleteUserId);
+        if (!Validator.isNull(iamIncompleteUserId)) {
+            User user = userLocalService.fetchUser(iamIncompleteUserId);
 
-			return renderUpdateAccount(renderRequest, user);
-		}
+            return renderUpdateAccount(renderRequest, user);
+        }
 
-		return "/login.jsp";
-	}
+        return "/login.jsp";
+    }
 
-	protected String renderUpdateAccount(
-			PortletRequest portletRequest, User user)
-		throws PortletException {
+    /**
+     * Redirect to the user update account page.
+     *
+     * @param portletRequest The portlet request
+     * @param user The user to update
+     * @return The jsp page for the update
+     * @throws PortletException If the user cannot be associated with
+     * the request
+     */
+    protected final String renderUpdateAccount(
+            final PortletRequest portletRequest, final User user)
+                    throws PortletException {
 
-		portletRequest.setAttribute("selUser", user);
+        portletRequest.setAttribute("selUser", user);
 
-		return "/update_account.jsp";
-	}
+        return "/update_account.jsp";
+    }
 
-	@Reference(unbind = "-")
-	protected void setIam(IAM iam) {
-		this.iam = iam;
-	}
+    /**
+     * Sets the iam component.
+     *
+     * @param iamComp The iam component
+     */
+    @Reference(unbind = "-")
+    protected final void setIam(final IAM iamComp) {
+        this.iam = iamComp;
+    }
 
-	@Reference(unbind = "-")
-	protected void setUserLocalService(UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
+    /**
+     * Sets the user local service.
+     *
+     * @param userLocalServiceComp The user local service component
+     */
+    @Reference(unbind = "-")
+    protected final void setUserLocalService(
+            final UserLocalService userLocalServiceComp) {
+        this.userLocalService = userLocalServiceComp;
+    }
 
-	private IAM iam;
-	private UserLocalService userLocalService;
+    /**
+     * The iam component.
+     */
+    private IAM iam;
+
+    /**
+     * The user local service.
+     */
+    private UserLocalService userLocalService;
 }

@@ -23,21 +23,46 @@
 package com.liferay.portal.security.sso.iam.constants;
 
 /**
+ * Keys used in the web interfaces.
+ *
  * @author Marco Fargetta
  */
-public interface IAMWebKeys {
+public final class IAMWebKeys {
 
-	public static final String IAM_ACCESS_TOKEN = "IAM_ACCESS_TOKEN";
+    /**
+     * IAM access token.
+     */
+    public static final String IAM_ACCESS_TOKEN = "IAM_ACCESS_TOKEN";
 
-	public static final String IAM_APP_ID = "IAM_APP_ID";
+    /**
+     * IAM application identifier.
+     */
+    public static final String IAM_APP_ID = "IAM_APP_ID";
 
-	public static final String IAM_AUTH_REDIRECT_URL =
-		"IAM_AUTH_REDIRECT_URL";
+    /**
+     * IAM authentication redirect URL.
+     */
+    public static final String IAM_AUTH_REDIRECT_URL = "IAM_AUTH_REDIRECT_URL";
 
-	public static final String IAM_AUTH_URL = "IAM_AUTH_URL";
+    /**
+     * IAM authentication URL.
+     */
+    public static final String IAM_AUTH_URL = "IAM_AUTH_URL";
 
-	public static final String IAM_USER_ID = "IAM_USER_ID";
+    /**
+     * IAM user identifier.
+     */
+    public static final String IAM_USER_ID = "IAM_USER_ID";
 
-	public static final String IAM_USER_EMAIL_ADDRESS =
-			"IAM_USER_EMAIL_ADDRESS";
+    /**
+     * IAM user email address.
+     */
+    public static final String IAM_USER_EMAIL_ADDRESS =
+            "IAM_USER_EMAIL_ADDRESS";
+
+    /**
+     * Default constructor to avoid instances.
+     */
+    private IAMWebKeys() {
+    }
 }

@@ -22,6 +22,7 @@
 
 package com.liferay.portal.security.sso.iam.internal.auto.login;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,85 +50,107 @@ import com.liferay.portal.security.sso.iam.constants.IAMWebKeys;
 /**
  * @author Marco Fargetta
  */
-@Component(
-	immediate = true,
-	service = AutoLogin.class
-)
+@Component(immediate = true, service = AutoLogin.class)
 public class IAMAutoLogin extends BaseAutoLogin {
 
-	@Override
-	protected String[] doLogin(
-			HttpServletRequest request, HttpServletResponse response)
-					throws Exception {
+    @Override
+    protected final String[] doLogin(final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
 
-		long companyId = PortalUtil.getCompanyId(request);
+        long companyId = PortalUtil.getCompanyId(request);
 
-		if (!iam.isEnabled(companyId)) {
-			return null;
-		}
+        if (!iam.isEnabled(companyId)) {
+            return null;
+        }
 
-		User user = getUser(request, companyId);
+        User user = getUser(request, companyId);
 
-		if (user == null) {
-			return null;
-		}
+        if (user == null) {
+            return null;
+        }
 
-		String[] credentials = new String[3];
+        List<String> credentials = new ArrayList<>();
 
-		credentials[0] = String.valueOf(user.getUserId());
-		credentials[1] = user.getPassword();
-		credentials[2] = Boolean.FALSE.toString();
+        credentials.add(String.valueOf(user.getUserId()));
+        credentials.add(user.getPassword());
+        credentials.add(Boolean.FALSE.toString());
 
-		return credentials;
-	}
-	
-	protected User getUser(HttpServletRequest request, long companyId)
-			throws Exception {
+        return credentials.toArray(new String[credentials.size()]);
+    }
 
-		HttpSession session = request.getSession();
+    /**
+     * Retrieve the user requesting the login.
+     *
+     * @param request The servlet request
+     * @param companyId The company id
+     * @return The user
+     * @throws Exception If the user cannot be retrieved
+     */
+    protected final User getUser(final HttpServletRequest request,
+            final long companyId)
+            throws Exception {
 
-		String emailAddress = GetterUtil.getString(
-				session.getAttribute(IAMWebKeys.IAM_USER_EMAIL_ADDRESS));
+        HttpSession session = request.getSession();
 
-		if (Validator.isNotNull(emailAddress)) {
-				session.removeAttribute(IAMWebKeys.IAM_USER_EMAIL_ADDRESS);
+        String emailAddress = GetterUtil.getString(session.getAttribute(
+                IAMWebKeys.IAM_USER_EMAIL_ADDRESS));
 
-				return userLocalService.getUserByEmailAddress(
-						companyId, emailAddress);
-		}
-		else {
-			String iamUserId = GetterUtil.getString(
-					(String)session.getAttribute(IAMWebKeys.IAM_USER_ID));
+        if (Validator.isNotNull(emailAddress)) {
+            session.removeAttribute(IAMWebKeys.IAM_USER_EMAIL_ADDRESS);
 
-			if (Validator.isNotNull(iamUserId)) {
-				long classNameId = ClassNameLocalServiceUtil.getClassNameId(User.class);
-				List<ExpandoValue> values = 
-						ExpandoValueLocalServiceUtil.getColumnValues(
-								companyId, classNameId,
-								ExpandoTableConstants.DEFAULT_TABLE_NAME,
-								"iamUserID",iamUserId, -1, -1);
-				if (values.size() > 1) {
-					throw new AuthException("Multiple user with the same IAM identifier");
-				}
-				if (values.size() == 1) {
-					return userLocalService.getUser(values.get(0).getClassPK());
-				}
-			}
-		}
+            return userLocalService.getUserByEmailAddress(companyId,
+                    emailAddress);
+        } else {
+            String iamUserId = GetterUtil.getString((String) session
+                    .getAttribute(IAMWebKeys.IAM_USER_ID));
 
-		return null;
-	}
+            if (Validator.isNotNull(iamUserId)) {
+                long classNameId = ClassNameLocalServiceUtil.getClassNameId(
+                        User.class);
+                List<ExpandoValue> values = ExpandoValueLocalServiceUtil
+                        .getColumnValues(companyId, classNameId,
+                                ExpandoTableConstants.DEFAULT_TABLE_NAME,
+                                "iamUserID", iamUserId, -1, -1);
+                if (values.size() > 1) {
+                    throw new AuthException(
+                            "Multiple user with the same IAM identifier");
+                }
+                if (values.size() == 1) {
+                    return userLocalService.getUser(values.get(0)
+                            .getClassPK());
+                }
+            }
+        }
 
-	@Reference(unbind = "-")
-	protected void setIam(IAM iam) {
-		this.iam = iam;
-	}
+        return null;
+    }
 
-	@Reference(unbind = "-")
-	protected void setUserLocalService(UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
+    /**
+     * Sets the iam component.
+     * @param iamComp The iam component
+     */
+    @Reference(unbind = "-")
+    protected final void setIam(final IAM iamComp) {
+        this.iam = iamComp;
+    }
 
-	private IAM iam;
-	private UserLocalService userLocalService;
+    /**
+     * Sets the user service.
+     * @param userLocalServiceComp The user local service
+     */
+    @Reference(unbind = "-")
+    protected final void setUserLocalService(
+            final UserLocalService userLocalServiceComp) {
+        this.userLocalService = userLocalServiceComp;
+    }
+
+    /**
+     * The iam component.
+     */
+    private IAM iam;
+
+    /**
+     * The user local service.
+     */
+    private UserLocalService userLocalService;
 }

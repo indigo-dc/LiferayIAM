@@ -31,7 +31,8 @@ import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
-import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
+import com.liferay.portal.instance.lifecycle.
+    BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
@@ -44,74 +45,97 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
  * @author Marco Fargetta
  */
 @Component(immediate = true, service = PortalInstanceLifecycleListener.class)
-public class AddIAMExpandoColumnsPortalInstanceLifecycleListener
-	extends BasePortalInstanceLifecycleListener {
+public class AddIAMExpandoColumnsPortalInstanceLifecycleListener extends
+        BasePortalInstanceLifecycleListener {
 
-	@Override
-	public void portalInstanceRegistered(Company company) throws Exception {
-		Long companyId = CompanyThreadLocal.getCompanyId();
+    @Override
+    public final void portalInstanceRegistered(final Company company)
+            throws Exception {
+        Long companyId = CompanyThreadLocal.getCompanyId();
 
-		try {
-			CompanyThreadLocal.setCompanyId(company.getCompanyId());
+        try {
+            CompanyThreadLocal.setCompanyId(company.getCompanyId());
 
-			long classNameId = classNameLocalService.getClassNameId(
-				User.class.getName());
+            long classNameId = classNameLocalService.getClassNameId(User.class
+                    .getName());
 
-			ExpandoTable expandoTable = expandoTableLocalService.fetchTable(
-				company.getCompanyId(), classNameId,
-				ExpandoTableConstants.DEFAULT_TABLE_NAME);
+            ExpandoTable expandoTable = expandoTableLocalService.fetchTable(
+                    company.getCompanyId(), classNameId,
+                    ExpandoTableConstants.DEFAULT_TABLE_NAME);
 
-			if (expandoTable == null) {
-				expandoTable = expandoTableLocalService.addTable(
-					company.getCompanyId(), classNameId,
-					ExpandoTableConstants.DEFAULT_TABLE_NAME);
-			}
+            if (expandoTable == null) {
+                expandoTable = expandoTableLocalService.addTable(company
+                        .getCompanyId(), classNameId,
+                        ExpandoTableConstants.DEFAULT_TABLE_NAME);
+            }
 
-			UnicodeProperties properties = new UnicodeProperties();
+            UnicodeProperties properties = new UnicodeProperties();
 
-			properties.setProperty(ExpandoColumnConstants.PROPERTY_HIDDEN, "false");
-			properties.setProperty("visible-with-update-permission", "false");
-			properties.setProperty(ExpandoColumnConstants.INDEX_TYPE, Integer.toString(ExpandoColumnConstants.INDEX_TYPE_TEXT));
+            properties.setProperty(ExpandoColumnConstants.PROPERTY_HIDDEN,
+                    "false");
+            properties.setProperty("visible-with-update-permission", "false");
+            properties.setProperty(ExpandoColumnConstants.INDEX_TYPE, Integer
+                    .toString(ExpandoColumnConstants.INDEX_TYPE_TEXT));
 
-			addExpandoColumn(expandoTable, "iamUserID", properties);
-			addExpandoColumn(expandoTable, "iamAccessToken", properties);
-			addExpandoColumn(expandoTable, "iamRefreshToken", properties);
-		}
-		finally {
-			CompanyThreadLocal.setCompanyId(companyId);
-		}
-	}
+            addExpandoColumn(expandoTable, "iamUserID", properties);
+            addExpandoColumn(expandoTable, "iamAccessToken", properties);
+            addExpandoColumn(expandoTable, "iamRefreshToken", properties);
+        } finally {
+            CompanyThreadLocal.setCompanyId(companyId);
+        }
+    }
 
-	protected void addExpandoColumn(
-			ExpandoTable expandoTable, String name,
-			UnicodeProperties properties)
-		throws Exception {
+    /**
+     * Adds a new expando column to the expando table.
+     * The added column will have the String type.
+     *
+     * @param expandoTable The expando table to modify
+     * @param name The column name
+     * @param properties The column properties
+     * @throws Exception If the column cannot be added
+     */
+    protected final void addExpandoColumn(final ExpandoTable expandoTable,
+            final String name, final UnicodeProperties properties)
+                    throws Exception {
 
-		ExpandoColumn expandoColumn = expandoColumnLocalService.getColumn(
-			expandoTable.getTableId(), name);
+        ExpandoColumn expandoColumn = expandoColumnLocalService.getColumn(
+                expandoTable.getTableId(), name);
 
-		if (expandoColumn != null) {
-			return;
-		}
+        if (expandoColumn != null) {
+            return;
+        }
 
-		expandoColumn = expandoColumnLocalService.addColumn(
-			expandoTable.getTableId(), name, ExpandoColumnConstants.STRING);
+        expandoColumn = expandoColumnLocalService.addColumn(expandoTable
+                .getTableId(), name, ExpandoColumnConstants.STRING);
 
-		expandoColumnLocalService.updateTypeSettings(
-			expandoColumn.getColumnId(), properties.toString());
-	}
+        expandoColumnLocalService.updateTypeSettings(expandoColumn
+                .getColumnId(), properties.toString());
+    }
 
-	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
-	protected void setModuleServiceLifecycle(
-		ModuleServiceLifecycle moduleServiceLifecycle) {
-	}
+    /**
+     * Sets the module life cycle.
+     * @param moduleServiceLifecycle The module life cycle
+     */
+    @Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+    protected void setModuleServiceLifecycle(
+            final ModuleServiceLifecycle moduleServiceLifecycle) {
+    }
 
-	@Reference
-	private ClassNameLocalService classNameLocalService;
+    /**
+     * Reference to the class name service.
+     */
+    @Reference
+    private ClassNameLocalService classNameLocalService;
 
-	@Reference
-	private ExpandoColumnLocalService expandoColumnLocalService;
+    /**
+     * Reference to the expando column service.
+     */
+    @Reference
+    private ExpandoColumnLocalService expandoColumnLocalService;
 
-	@Reference
-	private ExpandoTableLocalService expandoTableLocalService;
+    /**
+     * Reference to the expando table service.
+     */
+    @Reference
+    private ExpandoTableLocalService expandoTableLocalService;
 }

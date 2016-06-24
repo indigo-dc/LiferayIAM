@@ -42,70 +42,82 @@ import com.liferay.portal.verify.VerifyProcess;
  * @author Marco Fargetta
  */
 @Component(
-	immediate = true,
-	property = {"verify.process.name=com.liferay.portal.security.sso.iam"},
-	service = VerifyProcess.class
-)
-public class IAMCompanySettingsVerifyProcess
-	extends BaseCompanySettingsVerifyProcess {
+        immediate = true,
+        property = {"verify.process.name=com.liferay.portal.security.sso.iam" },
+        service = VerifyProcess.class)
+public class IAMCompanySettingsVerifyProcess extends
+        BaseCompanySettingsVerifyProcess {
 
-	@Override
-	protected CompanyLocalService getCompanyLocalService() {
-		return _companyLocalService;
-	}
+    @Override
+    protected final CompanyLocalService getCompanyLocalService() {
+        return companyLocalService;
+    }
 
-	@Override
-	protected Set<String> getLegacyPropertyKeys() {
-		return new HashSet<String>();
-	}
+    @Override
+    protected final Set<String> getLegacyPropertyKeys() {
+        return new HashSet<String>();
+    }
 
-	@Override
-	protected Dictionary<String, String> getPropertyValues(long companyId) {
-		Dictionary<String, String> dictionary = new HashMapDictionary<>();
+    @Override
+    protected final Dictionary<String, String> getPropertyValues(
+            final long companyId) {
+        Dictionary<String, String> dictionary = new HashMapDictionary<>();
 
-		dictionary.put(
-			IAMConfigurationKeys.AUTH_ENABLED, StringPool.FALSE);
-		dictionary.put(
-			IAMConfigurationKeys.APP_ID, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.APP_SECRET, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.CONFIGURATION_URL, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.OAUTH_AUTH_URL, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.OAUTH_TOKEN_URL, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.OPENID_USERINFO_URL, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.OPENID_JWK_URL, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.OPENID_ISSUER, StringPool.BLANK);
-		dictionary.put(
-			IAMConfigurationKeys.VERIFIED_ACCOUNT_REQUIRED, StringPool.FALSE);
-		return dictionary;
-	}
+        dictionary.put(IAMConfigurationKeys.AUTH_ENABLED, StringPool.FALSE);
+        dictionary.put(IAMConfigurationKeys.APP_ID, StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.APP_SECRET, StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.CONFIGURATION_URL,
+                StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.OAUTH_AUTH_URL, StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.OAUTH_TOKEN_URL, StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.OPENID_USERINFO_URL,
+                StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.OPENID_JWK_URL, StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.OPENID_ISSUER, StringPool.BLANK);
+        dictionary.put(IAMConfigurationKeys.VERIFIED_ACCOUNT_REQUIRED,
+                StringPool.FALSE);
+        return dictionary;
+    }
 
-	@Override
-	protected SettingsFactory getSettingsFactory() {
-		return _settingsFactory;
-	}
+    @Override
+    protected final SettingsFactory getSettingsFactory() {
+        return settingsFactory;
+    }
 
-	@Override
-	protected String getSettingsId() {
-		return IAMConstants.SERVICE_NAME;
-	}
+    @Override
+    protected final String getSettingsId() {
+        return IAMConstants.SERVICE_NAME;
+    }
 
-	@Reference(unbind = "-")
-	protected void setCompanyLocalService(
-		CompanyLocalService companyLocalService) {
-		_companyLocalService = companyLocalService;
-	}
+    /**
+     * Sets the company service.
+     *
+     * @param companyLocalServiceComp The company local service
+     */
+    @Reference(unbind = "-")
+    protected final void setCompanyLocalService(
+            final CompanyLocalService companyLocalServiceComp) {
+        this.companyLocalService = companyLocalServiceComp;
+    }
 
-	@Reference(unbind = "-")
-	protected void setSettingsFactory(SettingsFactory settingsFactory) {
-		_settingsFactory = settingsFactory;
-	}
-	private CompanyLocalService _companyLocalService;
-	private SettingsFactory _settingsFactory;
+    /**
+     * Sets the settings factory.
+     *
+     * @param settingsFactoryComp setting factory component
+     */
+    @Reference(unbind = "-")
+    protected final void setSettingsFactory(
+            final SettingsFactory settingsFactoryComp) {
+        this.settingsFactory = settingsFactoryComp;
+    }
+
+    /**
+     * The company service.
+     */
+    private CompanyLocalService companyLocalService;
+
+    /**
+     * The setting factory.
+     */
+    private SettingsFactory settingsFactory;
 }

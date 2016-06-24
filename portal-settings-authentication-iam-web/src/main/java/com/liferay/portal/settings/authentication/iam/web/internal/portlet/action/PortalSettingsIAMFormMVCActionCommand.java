@@ -19,7 +19,8 @@
  * the License.
  **********************************************************************
  */
-package com.liferay.portal.settings.authentication.iam.web.internal.portlet.action;
+package com.liferay.portal.settings.authentication.iam.web.internal.
+    portlet.action;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -30,82 +31,79 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.sso.iam.constants.IAMConstants;
-import com.liferay.portal.settings.portlet.action.BasePortalSettingsFormMVCActionCommand;
+import com.liferay.portal.settings.portlet.action.
+    BasePortalSettingsFormMVCActionCommand;
 import com.liferay.portal.settings.web.constants.PortalSettingsPortletKeys;
 
 /**
  * @author Marco Fargetta
  */
 @Component(
-	immediate = true,
-	property = {
-		"javax.portlet.name=" + PortalSettingsPortletKeys.PORTAL_SETTINGS,
-		"mvc.command.name=/portal_settings/iam_connect"
-	},
-	service = MVCActionCommand.class
-)
-public class PortalSettingsIAMFormMVCActionCommand
-	extends BasePortalSettingsFormMVCActionCommand {
+        immediate = true,
+        property = {
+                "javax.portlet.name="
+                        + PortalSettingsPortletKeys.PORTAL_SETTINGS,
+                "mvc.command.name=/portal_settings/iam_connect" },
+        service = MVCActionCommand.class)
+public class PortalSettingsIAMFormMVCActionCommand extends
+        BasePortalSettingsFormMVCActionCommand {
 
-	@Override
-	protected String getParameterNamespace() {
-		return "iam--";
-	}
+    @Override
+    protected final String getParameterNamespace() {
+        return "iam--";
+    }
 
-	@Override
-	protected String getSettingsId() {
-		return IAMConstants.SERVICE_NAME;
-	}
+    @Override
+    protected final String getSettingsId() {
+        return IAMConstants.SERVICE_NAME;
+    }
 
-	@Override
-	protected void doValidateForm(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-					throws Exception {
+    @Override
+    protected final void doValidateForm(final ActionRequest actionRequest,
+            final ActionResponse actionResponse) throws Exception {
 
-		boolean iamEnabled = getBoolean(actionRequest, "enabled");
+        boolean iamEnabled = getBoolean(actionRequest, "enabled");
 
-		if (!iamEnabled) {
-			return;
-		}
+        if (!iamEnabled) {
+            return;
+        }
 
-		String iamConfigurationURL = getString(actionRequest, "configurationURL");
-		String iamOauthAuthURL = getString(actionRequest, "oauthAuthURL");
-		String iamOauthTokenURL = getString(actionRequest, "oauthTokenURL");
-		String iamOpenidUserinfoURL = getString(actionRequest, "openidUserinfoURL");
-		String iamOpenidJwkURL = getString(actionRequest, "openidJwkURL");
+        String iamConfigurationURL = getString(actionRequest,
+                "configurationURL");
+        String iamOauthAuthURL = getString(actionRequest, "oauthAuthURL");
+        String iamOauthTokenURL = getString(actionRequest, "oauthTokenURL");
+        String iamOpenidUserinfoURL = getString(actionRequest,
+                "openidUserinfoURL");
+        String iamOpenidJwkURL = getString(actionRequest, "openidJwkURL");
 
-		if (Validator.isNotNull(iamConfigurationURL) &&
-			!Validator.isUrl(iamConfigurationURL)) {
+        if (Validator.isNotNull(iamConfigurationURL) && !Validator.isUrl(
+                iamConfigurationURL)) {
 
-			SessionErrors.add(actionRequest, "iamConfigurationURLInvalid");
-		}
+            SessionErrors.add(actionRequest, "iamConfigurationURLInvalid");
+        }
 
-		if (Validator.isNotNull(iamOauthAuthURL) &&
-			!Validator.isUrl(iamOauthAuthURL)) {
+        if (Validator.isNotNull(iamOauthAuthURL) && !Validator.isUrl(
+                iamOauthAuthURL)) {
 
-			SessionErrors.add(
-				actionRequest, "iamOauthAuthURLInvalid");
-		}
+            SessionErrors.add(actionRequest, "iamOauthAuthURLInvalid");
+        }
 
-		if (Validator.isNotNull(iamOauthTokenURL) &&
-			!Validator.isUrl(iamOauthTokenURL)) {
+        if (Validator.isNotNull(iamOauthTokenURL) && !Validator.isUrl(
+                iamOauthTokenURL)) {
 
-			SessionErrors.add(
-				actionRequest, "iamOauthTokenURLInvalid");
-		}
+            SessionErrors.add(actionRequest, "iamOauthTokenURLInvalid");
+        }
 
-		if (Validator.isNotNull(iamOpenidUserinfoURL) &&
-			!Validator.isUrl(iamOpenidUserinfoURL)) {
+        if (Validator.isNotNull(iamOpenidUserinfoURL) && !Validator.isUrl(
+                iamOpenidUserinfoURL)) {
 
-			SessionErrors.add(
-				actionRequest, "iamOpenidUserinfoURLInvalid");
-		}
+            SessionErrors.add(actionRequest, "iamOpenidUserinfoURLInvalid");
+        }
 
-		if (Validator.isNotNull(iamOpenidJwkURL) &&
-			!Validator.isUrl(iamOpenidJwkURL)) {
+        if (Validator.isNotNull(iamOpenidJwkURL) && !Validator.isUrl(
+                iamOpenidJwkURL)) {
 
-			SessionErrors.add(
-				actionRequest, "iamOpenidJWKURLInvalid");
-		}
-	}
+            SessionErrors.add(actionRequest, "iamOpenidJWKURLInvalid");
+        }
+    }
 }

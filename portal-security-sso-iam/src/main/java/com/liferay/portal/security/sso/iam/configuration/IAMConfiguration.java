@@ -23,64 +23,125 @@
 package com.liferay.portal.security.sso.iam.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
-import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.configuration.metatype.annotations
+    .ExtendedObjectClassDefinition;
 
 /**
  * @author Marco Fargetta
  */
 @ExtendedObjectClassDefinition(category = "foundation")
 @Meta.OCD(
-		id = "com.liferay.portal.security.sso.iam.configuration.IAMConfiguration",
-		localization = "content/Language",
-		name = "iam.configuration.name"
-)
+        id =
+          "com.liferay.portal.security.sso.iam.configuration.IAMConfiguration",
+        localization = "content/Language", name = "iam.configuration.name")
 public interface IAMConfiguration {
 
-	@Meta.AD(deflt = "false", required = false)
-	public boolean enabled();
+    /**
+     * Checks if the IAM authentication is enabled.
+     *
+     * @return True if enabled, false otherwise
+     */
+    @Meta.AD(deflt = "false", required = false)
+    boolean enabled();
 
-	@Meta.AD(
-		deflt = "false", name ="%require-verified-account", required = false
-	)
-	public boolean verifiedAccountRequired();
+    /**
+     * Checks if the verified account is required.
+     *
+     * @return True if required, false otherwise
+     */
+    @Meta.AD(
+            deflt = "false",
+            name = "%require-verified-account",
+            required = false)
+    boolean verifiedAccountRequired();
 
-	@Meta.AD(name ="%application-id", required = false)
-	public String appId();
+    /**
+     * Retrieves the application id.
+     *
+     * @return The application id
+     */
+    @Meta.AD(name = "%application-id", required = false)
+    String appId();
 
-	@Meta.AD(name ="%application-secret", required = false)
-	public String appSecret();
+    /**
+     * Retrieve the application secret.
+     *
+     * @return The application secret
+     */
+    @Meta.AD(name = "%application-secret", required = false)
+    String appSecret();
 
-	@Meta.AD(deflt = "https://iam.indigo-datacloud.eu/.well-known/openid-configuration",
-			name ="%configuration-url", required = false)
-	public String configurationURL();
+    /**
+     * Retrieves the oAuth configuration URL.
+     *
+     * @return The configuration URL
+     */
+    @Meta.AD(
+            deflt =
+             "https://iam.indigo-datacloud.eu/.well-known/openid-configuration",
+            name = "%configuration-url",
+            required = false)
+    String configurationURL();
 
-	@Meta.AD(
-		deflt = "https://iam.indigo-datacloud.eu/oauth2-as/oauth2-authz",
-		name ="%oauth-authentication-url", required = false
-	)
-	public String oauthAuthURL();
+    /**
+     * Retrieves the oAuth authentication URL.
+     *
+     * @return The authentication URL
+     */
+    @Meta.AD(
+            deflt = "https://iam.indigo-datacloud.eu/oauth2-as/oauth2-authz",
+            name = "%oauth-authentication-url",
+            required = false)
+    String oauthAuthURL();
 
-	@Meta.AD(
-		deflt = "https://iam.indigo-datacloud.eu/oauth2/token",
-		name ="%oauth-token-url", required = false
-	)
-	public String oauthTokenURL();
+    /**
+     * Retrieves the oAuth token URL.
+     *
+     * @return The token URL
+     */
+    @Meta.AD(
+            deflt = "https://iam.indigo-datacloud.eu/oauth2/token",
+            name = "%oauth-token-url",
+            required = false)
+    String oauthTokenURL();
 
-	@Meta.AD(
-		deflt = "https://iam.indigo-datacloud.eu/oauth2/userinfo",
-		name ="%openid-userinfo-url", required = false
-	)
-	public String openidUserinfoURL();
+    /**
+     * Retrieves the user info URL.
+     *
+     * @return The user info URL
+     */
+    @Meta.AD(
+            deflt = "https://iam.indigo-datacloud.eu/oauth2/userinfo",
+            name = "%openid-userinfo-url",
+            required = false)
+    String openidUserinfoURL();
 
-	@Meta.AD(
-		deflt = "https://iam.indigo-datacloud.eu/oauth2/jwk",
-		name ="%openid-jwk-url", required = false
-	)
-	public String openidJwkURL();
+    /**
+     * Retrieves the JWK URL.
+     *
+     * @return The JWK URL
+     */
+    @Meta.AD(
+            deflt = "https://iam.indigo-datacloud.eu/oauth2/jwk",
+            name = "%openid-jwk-url",
+            required = false)
+    String openidJwkURL();
 
-	@Meta.AD(name ="%openid-issuer", required = false)
-	public String openidIssuer();
+    /**
+     * Retrieves the OpenId issuer.
+     *
+     * @return The OpenId isser
+     */
+    @Meta.AD(
+            name = "%openid-issuer", required = false)
+    String openidIssuer();
 
-	@Meta.AD(name ="%oauth-extra-scopes", required = false)
-	public String oauthExtraScopes();
+    /**
+     * Retrieves the OpenId extra scopes.
+     *
+     * @return The OpenId extra scopes
+     */
+    @Meta.AD(
+            name = "%oauth-extra-scopes", required = false)
+    String oauthExtraScopes();
 }

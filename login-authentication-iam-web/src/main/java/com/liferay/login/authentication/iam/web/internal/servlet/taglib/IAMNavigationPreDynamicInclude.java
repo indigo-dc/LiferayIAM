@@ -47,55 +47,80 @@ import com.liferay.portal.security.sso.iam.IAM;
 @Component(immediate = true, service = DynamicInclude.class)
 public class IAMNavigationPreDynamicInclude extends BaseDynamicInclude {
 
-	@Override
-	public void include(HttpServletRequest request, HttpServletResponse response, String key)
-		throws IOException {
+    @Override
+    public final void include(final HttpServletRequest request,
+            final HttpServletResponse response, final String key)
+                    throws IOException {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-				WebKeys.THEME_DISPLAY);
+        ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(
+                WebKeys.THEME_DISPLAY);
 
-			if (!iam.isEnabled(themeDisplay.getCompanyId())) {
-				return;
-			}
+        if (!iam.isEnabled(themeDisplay.getCompanyId())) {
+            return;
+        }
 
-			RequestDispatcher requestDispatcher =
-				servletContext.getRequestDispatcher(_JSP_PATH);
+        RequestDispatcher requestDispatcher = servletContext
+                .getRequestDispatcher(JSP_PATH);
 
-			try {
-				requestDispatcher.include(request, response);
-			}
-			catch (ServletException se) {
-				_log.error("Unable to include JSP " + _JSP_PATH, se);
+        try {
+            requestDispatcher.include(request, response);
+        } catch (ServletException se) {
+            log.error("Unable to include JSP " + JSP_PATH, se);
 
-				throw new IOException("Unable to include JSP " + _JSP_PATH, se);
-			}		
-	}
+            throw new IOException("Unable to include JSP " + JSP_PATH, se);
+        }
+    }
 
-	@Override
-	public void register(DynamicIncludeRegistry dynamicIncludeRegistry) {
+    @Override
+    public final void register(
+            final DynamicIncludeRegistry dynamicIncludeRegistry) {
+        dynamicIncludeRegistry.register(
+                "com.liferay.login.web#/navigation.jsp#pre");
+    }
 
-		dynamicIncludeRegistry.register(
-			"com.liferay.login.web#/navigation.jsp#pre");
-	}
+    /**
+     * Sets the iam component.
+     *
+     * @param iamComp The iam component
+     */
+    @Reference(unbind = "-")
+    protected final void setIam(final IAM iamComp) {
+        this.iam = iamComp;
+    }
 
-	@Reference(unbind = "-")
-	protected void setIam(IAM iam) {
-		this.iam = iam;
-	}
+    /**
+     * Sets the servlet context.
+     *
+     * @param servletContextComp The servlet context
+     */
+    @Reference(
+            target =
+             "(osgi.web.symbolicname=com.liferay.login.authentication.iam.web)",
+            unbind = "-")
+    protected final void setServletContext(
+            final ServletContext servletContextComp) {
+        this.servletContext = servletContextComp;
+    }
 
-	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.login.authentication.iam.web)",
-		unbind = "-"
-	)
-	protected void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
-	
-	private static final String _JSP_PATH =
-			"/html/portlet/login/navigation/iam.jsp";
-	private static final Log _log = LogFactoryUtil.getLog(
-			IAMNavigationPreDynamicInclude.class);
+    /**
+     * JSP path to the main UI file.
+     */
+    private static final String JSP_PATH =
+            "/html/portlet/login/navigation/iam.jsp";
 
-	private ServletContext servletContext;
-	private IAM iam;
+    /**
+     * The servlet context.
+     */
+    private ServletContext servletContext;
+
+    /**
+     * The iam component.
+     */
+    private IAM iam;
+
+    /**
+     * The logger.
+     */
+    private final Log log = LogFactoryUtil.getLog(
+            IAMNavigationPreDynamicInclude.class);
 }

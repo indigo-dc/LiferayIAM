@@ -23,32 +23,82 @@
 package com.liferay.portal.security.sso.iam.constants;
 
 /**
+ * Configuration keys.
+ *
  * @author Marco Fargetta
  */
-public class IAMConfigurationKeys {
+public final class IAMConfigurationKeys {
 
-	public static final String APP_ID = "appId";
+    /**
+     * Application identifier.
+     */
+    public static final String APP_ID = "appId";
 
-	public static final String APP_SECRET = "appSecret";
+    /**
+     * Application secret.
+     */
+    public static final String APP_SECRET = "appSecret";
 
-	public static final String AUTH_ENABLED = "enabled";
+    /**
+     * Application enabled.
+     */
+    public static final String AUTH_ENABLED = "enabled";
 
-	public static final String CONFIGURATION_URL = "configurationURL";
+    /**
+     * OAuth configuration URL.
+     */
+    public static final String CONFIGURATION_URL = "configurationURL";
 
-	public static final String OAUTH_AUTH_URL = "oauthAuthURL";
+    /**
+     * OAuth authentication URL.
+     */
+    public static final String OAUTH_AUTH_URL = "oauthAuthURL";
 
-	public static final String OAUTH_TOKEN_URL = "oauthTokenURL";
+    /**
+     * OAuth token URL.
+     */
+    public static final String OAUTH_TOKEN_URL = "oauthTokenURL";
 
-	public static final String OAUTH_EXTRA_SCOPES = "oauthExtraScopes";
+    /**
+     * Extra scopes.
+     */
+    public static final String OAUTH_EXTRA_SCOPES = "oauthExtraScopes";
 
-	public static final String OPENID_USERINFO_URL = "openidUserinfoURL";
+    /**
+     * User info URL.
+     */
+    public static final String OPENID_USERINFO_URL = "openidUserinfoURL";
 
-	public static final String OPENID_JWK_URL = "openidJwkURL";
+    /**
+     * JWK URL.
+     */
+    public static final String OPENID_JWK_URL = "openidJwkURL";
 
-	public static final String OPENID_ISSUER = "openidIssuer";
+    /**
+     * OAuth issuer.
+     */
+    public static final String OPENID_ISSUER = "openidIssuer";
 
-	public static final String VERIFIED_ACCOUNT_REQUIRED =
-		"verifiedAccountRequired";
+    /**
+     * Verified account request.
+     */
+    public static final String VERIFIED_ACCOUNT_REQUIRED =
+            "verifiedAccountRequired";
 
-	public static final String GROUP_PREFIX = "iam-";
+    /**
+     * Prefix for the group provided by IAM.
+     */
+    public static final String GROUP_PREFIX = "iam-";
+
+    /**
+     * Minimum default token lifetime to be valid.
+     * Value is milliseconds and it is 3 minutes.
+     */
+    public static final long MINIMUM_TOKEN_LIFETIME = 180000L;
+
+    /**
+     * Default constructor to avoid instances.
+     */
+    private IAMConfigurationKeys() {
+    }
 }

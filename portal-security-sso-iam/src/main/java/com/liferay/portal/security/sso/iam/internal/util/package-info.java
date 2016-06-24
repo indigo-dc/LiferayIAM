@@ -19,17 +19,8 @@
  * the License.
  **********************************************************************
  */
-
-package com.liferay.portal.security.sso.iam.internal.web.portlet.path;
-
-import org.osgi.service.component.annotations.Component;
-
 /**
+ *
  * @author Marco Fargetta
  */
-@Component(
-        immediate = true,
-        property = {"auth.public.path=/portal/iam_openidconnect" },
-        service = Object.class)
-public class AuthPublicPath {
-}
+package com.liferay.portal.security.sso.iam.internal.util;
