@@ -29,7 +29,7 @@ to this method. This can be configured going to the page `Liferay > Control Pane
 open the `Define Permissions` dialog which will show the authorisation for the iam related method under the *Users and Organisations*
 group, as shown in the following picture:
 
-![IAM permissions](img/permission.png)
+![IAM permissions](img/permissions.png)
 
 Enable the permissions for the `model.resource.com.liferay.portal.security.sso.iam` among the *Resource Permissions* and
 everyone with this role can access the remote methods.
