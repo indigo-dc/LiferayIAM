@@ -2,7 +2,7 @@
 description: This section describe the element added to Liferay User Interface from the point of view of the user.
 ---
 
-# User Interface
+# User Guide
 
 When the modules are deployed and properly configured the user interface change in few component. The login portlet
 will include, among the other enabled protocol, the new *INDIGO AAI* authentication method, as shown in the following picture:
