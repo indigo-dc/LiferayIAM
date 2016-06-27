@@ -1,6 +1,14 @@
 apply plugin: 'checkstyle'
 checkstyle.toolVersion = '6.6'
 
+def checkStyleProps = ['baseDir': "$project.projectDir"]
+checkstyleMain {
+	configProperties = checkStyleProps
+}
+checkstyleTest {
+	configProperties = checkStyleProps
+}
+
 buildscript {
 	dependencies {
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.service.builder", version: "latest.release"

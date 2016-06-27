@@ -28,54 +28,83 @@ import com.liferay.portal.kernel.json.JSON;
 
 import aQute.bnd.annotation.ProviderType;
 
-
 /**
+ * This is the  class object returned from the token service.
+ * This object is used by the remote interface of the token service
+ * and is not internally used.
+ *
  * @author Marco Fargetta
  */
 @ProviderType
 public class TokenInfo {
 
-	
-	/**
-	 * @return the error
-	 */
-	public final String getError() {
-		return error;
-	}
-	/**
-	 * @param error the error to set
-	 */
-	public final void setError(String error) {
-		this.error = error;
-	}
-	/**
-	 * @return the subject
-	 */
-	public final String getSubject() {
-		return subject;
-	}
-	/**
-	 * @param subject the subject to set
-	 */
-	public final void setSubject(String subject) {
-		this.subject = subject;
-	}
-	/**
-	 * @return the groups
-	 */
-	@JSON
-	public final List<String> getGroups() {
-		return groups;
-	}
-	/**
-	 * @param groups the groups to set
-	 */
-	public final void setGroups(List<String> groups) {
-		this.groups = groups;
-	}
+    /**
+     * Retrieves the error message is a problem arise for the service.
+     *
+     * @return The error
+     */
+    public final String getError() {
+        return error;
+    }
 
+    /**
+     * Sets the error message.
+     *
+     * @param errorMsg The error to set
+     */
+    public final void setError(final String errorMsg) {
+        this.error = errorMsg;
+    }
 
-	private String error;
-	private String subject;
-	private List<String> groups;
+    /**
+     * Retrieves the subject.
+     *
+     * @return The subject
+     */
+    public final String getSubject() {
+        return subject;
+    }
+
+    /**
+     * Sets the user subject.
+     *
+     * @param aSubject The subject to set
+     */
+    public final void setSubject(final String aSubject) {
+        this.subject = aSubject;
+    }
+
+    /**
+     * Retrieves the user groups.
+     *
+     * @return The groups
+     */
+    @JSON
+    public final List<String> getGroups() {
+        return groups;
+    }
+
+    /**
+     * Sets the user groups.
+     *
+     * @param someGroups The groups to set
+     */
+    public final void setGroups(final List<String> someGroups) {
+        this.groups = someGroups;
+    }
+
+    /**
+     * The error message.
+     */
+    private String error;
+
+    /**
+     * The user subject.
+     */
+    private String subject;
+
+    /**
+     * The user groups.
+     */
+    private List<String> groups;
 }

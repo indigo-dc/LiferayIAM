@@ -19,31 +19,9 @@
  * the License.
  **********************************************************************
  */
-package com.liferay.portal.security.sso.iam.datasource;
-
-import javax.sql.DataSource;
 
 /**
- * This implements a fake data source.
- * A fake datasource is used in conjunction with the service builder
- * to create models not persisted in Liferay DB but still providing the remote
- * interface.
  *
  * @author Marco Fargetta
  */
-public final class FakeDataSource {
-    /**
-     * Return a DataSource without real connection to any DB.
-     *
-     * @return DataSource Always returns null.
-     */
-    public static DataSource getDataSource() {
-        return null;
-    }
-
-    /**
-     * Default constructor to avoid useless objects.
-     */
-    private FakeDataSource() {
-    }
-}
+package com.liferay.portal.security.sso.iam.datasource;
