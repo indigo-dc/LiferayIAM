@@ -6,5 +6,5 @@
 
 <suppressions>
         <suppress checks="[a-zA-Z0-9]*"
-                files="NoSuchTokenException\.java|Token\.java|TokenA(.*)java|TokenM(.*)java|TokenP(.*)java|TokenS(.*)java|TokenU(.*)java|TokenW(.*)java" />
+                files="NoSuchTokenException\.java|Token\.java|TokenM(.*)java|TokenP(.*)java|TokenS(.*)java|TokenU(.*)java|TokenW(.*)java" />
 </suppressions>

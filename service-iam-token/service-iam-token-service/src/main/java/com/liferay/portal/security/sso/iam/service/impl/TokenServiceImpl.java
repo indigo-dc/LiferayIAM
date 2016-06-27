@@ -124,7 +124,7 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
             final String token, final ServiceContext serviceContext)
             throws PortalException {
         TokenAccessPermissionChecker.check(getPermissionChecker(), getUserId(),
-                serviceContext.getScopeGroupId(), "VIEW");
+                serviceContext.getScopeGroupId(), "TOKEN_INFO");
         TokenInfo ti = new TokenInfo();
         try {
             User user = iam.getTokenUser(serviceContext.getCompanyId(), token);
