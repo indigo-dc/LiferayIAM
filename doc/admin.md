@@ -31,5 +31,5 @@ group, as shown in the following picture:
 
 ![IAM permissions](img/permissions.png)
 
-Enable the permissions for the `model.resource.com.liferay.portal.security.sso.iam` among the *Resource Permissions* and
+Enabling the permissions for the `model.resource.com.liferay.portal.security.sso.iam`, among the *Resource Permissions*,
 everyone with this role can access the remote methods.
