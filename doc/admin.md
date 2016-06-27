@@ -4,4 +4,4 @@ description: This section describe how to deploy and configure the plugins to al
 
 # Science Gateway Administrators
 
-Test `test` two
+Test `test` two it-strange
