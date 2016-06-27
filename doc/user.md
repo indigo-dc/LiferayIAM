@@ -22,5 +22,5 @@ Finally, the user can verify the tokens released by IAM going to his/her persona
 under the tab *Miscellaneous* there are the *Custom Fields* attributes. IAM tokens are among the custom fields as shown in the
 following picture:
 
-![Login portlet with INDIGO AAI authentication](img/CustField.png)
+![INDIGO AAI tokens](img/CustField.png)
 
