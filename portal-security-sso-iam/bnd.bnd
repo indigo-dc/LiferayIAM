@@ -22,6 +22,7 @@ Import-Package: \
 	!org.joda.*,\
 	!org.opensaml.*,\
 	!org.owasp.*,\
+	!org.junit.*,\
 	*
 Private-Package: \
 	com.nimbusds.*,\
