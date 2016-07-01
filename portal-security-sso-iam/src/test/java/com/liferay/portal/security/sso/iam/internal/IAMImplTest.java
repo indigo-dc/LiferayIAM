@@ -22,16 +22,25 @@
 
 package com.liferay.portal.security.sso.iam.internal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+
 
 /**
  * @author Marco Fargetta
  */
+@RunWith(MockitoJUnitRunner.class)
 public class IAMImplTest {
+    
+    @Spy
+    private IAMImpl iam;
 
     /**
      * @throws java.lang.Exception
@@ -60,6 +69,7 @@ public class IAMImplTest {
      */
     @Test
     public void testGetLoginRedirect() {
+        
         fail("Not yet implemented"); // TODO
     }
 
@@ -68,7 +78,8 @@ public class IAMImplTest {
      */
     @Test
     public void testIsEnabled() {
-        fail("Not yet implemented"); // TODO
+//        doReturn(new IAMConfigurationUtil(true)).when(iam).getIAMConfiguration(anyInt());
+        assertTrue("It should be enabled", iam.isEnabled(1));
     }
 
     /**
@@ -110,13 +121,4 @@ public class IAMImplTest {
     public void testGetTokenSubjectLongLong() {
         fail("Not yet implemented"); // TODO
     }
-
-    /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#getIAMConfiguration(long)}.
-     */
-    @Test
-    public void testGetIAMConfiguration() {
-        fail("Not yet implemented"); // TODO
-    }
-
 }

@@ -42,7 +42,7 @@ import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
+import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -132,10 +132,11 @@ import net.minidev.json.JSONObject;
           "com.liferay.portal.security.sso.iam.configuration.IAMConfiguration",
         immediate = true,
         service = IAM.class)
-public final class IAMImpl implements IAM {
+public class IAMImpl implements IAM {
 
     @Override
-    public User addOrUpdateUser(final HttpSession session, final long companyId,
+    public final User addOrUpdateUser(
+            final HttpSession session, final long companyId,
             final String authorizationCode, final String returnRequestUri,
             final List<String> scopes) throws Exception {
         log.debug("Add or update a new user");
@@ -221,7 +222,7 @@ public final class IAMImpl implements IAM {
     }
 
     @Override
-    public String getLoginRedirect(final long companyId,
+    public final String getLoginRedirect(final long companyId,
             final String returnRequestUri, final List<String> scopes,
             final boolean isRefreshTokenRequested)
             throws Exception {
@@ -242,7 +243,7 @@ public final class IAMImpl implements IAM {
     }
 
     @Override
-    public boolean isEnabled(final long companyId) {
+    public final boolean isEnabled(final long companyId) {
         IAMConfiguration iamConfiguration = getIAMConfiguration(companyId);
         if (Validator.isNull(iamConfiguration.appId()) || Validator.isNull(
                 iamConfiguration.appSecret())) {
@@ -253,10 +254,10 @@ public final class IAMImpl implements IAM {
     }
 
     @Override
-    public String getUserToken(final long userId) throws Exception {
+    public final String getUserToken(final long userId) throws Exception {
         User user = userLocalService.getUser(userId);
         String token;
-        ExpandoValue accessToken = ExpandoValueLocalServiceUtil.getValue(user
+        ExpandoValue accessToken = expandoValueLocalService.getValue(user
                 .getCompanyId(), User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamAccessToken",
                 user.getUserId());
@@ -270,8 +271,8 @@ public final class IAMImpl implements IAM {
     }
 
     @Override
-    public boolean hasRefreshToken(final User user) {
-        ExpandoValue refreshToken = ExpandoValueLocalServiceUtil.getValue(user
+    public final boolean hasRefreshToken(final User user) {
+        ExpandoValue refreshToken = expandoValueLocalService.getValue(user
                 .getCompanyId(), User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamRefreshToken",
                 user.getUserId());
@@ -285,7 +286,7 @@ public final class IAMImpl implements IAM {
      *      java.lang.String)
      */
     @Override
-    public User getTokenUser(final long companyId, final String token)
+    public final User getTokenUser(final long companyId, final String token)
             throws Exception {
         if (!isValidToken(companyId, token)) {
             return null;
@@ -301,7 +302,7 @@ public final class IAMImpl implements IAM {
                 .add(PropertyFactoryUtil.forName("classNameId").eq(GetterUtil
                         .getLong(ClassNameLocalServiceUtil.getClassNameId(
                                 User.class.getName()))));
-        List<ExpandoValue> expandoList = ExpandoValueLocalServiceUtil
+        List<ExpandoValue> expandoList = expandoValueLocalService
                 .dynamicQuery(userDynamicQuery);
 
         if (expandoList.size() == 1) {
@@ -316,8 +317,8 @@ public final class IAMImpl implements IAM {
      *      java.lang.String)
      */
     @Override
-    public String getTokenSubject(final long companyId, final String token)
-            throws Exception {
+    public final String getTokenSubject(
+            final long companyId, final String token) throws Exception {
         User user = getTokenUser(companyId, token);
         if (user == null) {
             return null;
@@ -329,9 +330,9 @@ public final class IAMImpl implements IAM {
      * @see com.liferay.portal.security.sso.iam.IAM#getTokenSubject(long, long)
      */
     @Override
-    public String getTokenSubject(final long companyId, final long userId)
+    public final String getTokenSubject(final long companyId, final long userId)
             throws Exception {
-        ExpandoValue subjectToken = ExpandoValueLocalServiceUtil.getValue(
+        ExpandoValue subjectToken = expandoValueLocalService.getValue(
                 companyId, User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamUserID", userId);
         if (subjectToken == null) {
@@ -346,7 +347,7 @@ public final class IAMImpl implements IAM {
      * @param companyId The portal company id
      * @return The iam configuration
      */
-    protected IAMConfiguration getIAMConfiguration(final long companyId) {
+    private IAMConfiguration getIAMConfiguration(final long companyId) {
         try {
             return configurationProvider.getConfiguration(
                     IAMConfiguration.class, new CompanyServiceSettingsLocator(
@@ -379,7 +380,7 @@ public final class IAMImpl implements IAM {
                 .getValue());
         long classNameId = ClassNameLocalServiceUtil.getClassNameId(
                 User.class);
-        List<ExpandoValue> values = ExpandoValueLocalServiceUtil
+        List<ExpandoValue> values = expandoValueLocalService
                 .getColumnValues(companyId, classNameId,
                         ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamUserID",
                         userInfo.getSubject().getValue(), -1, -1);
@@ -493,14 +494,14 @@ public final class IAMImpl implements IAM {
         user = userLocalService.updateReminderQuery(user.getUserId(),
                 "IAM Authentication", "NOT REQUESTED");
 
-        ExpandoValueLocalServiceUtil.addValue(companyId, User.class.getName(),
+        expandoValueLocalService.addValue(companyId, User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamUserID", user
                         .getUserId(), userInfo.getSubject().getValue());
-        ExpandoValueLocalServiceUtil.addValue(companyId, User.class.getName(),
+        expandoValueLocalService.addValue(companyId, User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamAccessToken",
                 user.getUserId(), bearerAccessToken.getValue());
         if (Validator.isNotNull(refreshToken)) {
-            ExpandoValueLocalServiceUtil.addValue(companyId, User.class
+            expandoValueLocalService.addValue(companyId, User.class
                     .getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
                     "iamRefreshToken", user.getUserId(), refreshToken
                             .getValue());
@@ -578,14 +579,14 @@ public final class IAMImpl implements IAM {
         String lastName = userInfo.getFamilyName();
         boolean male = Validator.equals(userInfo.getGender(), "male");
 
-        ExpandoValueLocalServiceUtil.addValue(companyId, User.class.getName(),
+        expandoValueLocalService.addValue(companyId, User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamUserID", user
                         .getUserId(), userInfo.getSubject().getValue());
-        ExpandoValueLocalServiceUtil.addValue(companyId, User.class.getName(),
+        expandoValueLocalService.addValue(companyId, User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamAccessToken",
                 user.getUserId(), bearerAccessToken.getValue());
         if (Validator.isNotNull(refreshToken)) {
-            ExpandoValueLocalServiceUtil.addValue(companyId, User.class
+            expandoValueLocalService.addValue(companyId, User.class
                     .getName(), ExpandoTableConstants.DEFAULT_TABLE_NAME,
                     "iamRefreshToken", user.getUserId(), refreshToken
                             .getValue());
@@ -642,7 +643,7 @@ public final class IAMImpl implements IAM {
      * @throws Exception If the new token cannot be retrieved
      */
     private String updateUserToken(final User user) throws Exception {
-        ExpandoValue refreshTokenEV = ExpandoValueLocalServiceUtil.getValue(
+        ExpandoValue refreshTokenEV = expandoValueLocalService.getValue(
                 user.getCompanyId(), User.class.getName(),
                 ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamRefreshToken",
                 user.getUserId());
@@ -674,7 +675,7 @@ public final class IAMImpl implements IAM {
             log.error("Refresh token error: \n" + errorResponse.toJSONObject()
                     .toString());
             try {
-                ExpandoValueLocalServiceUtil.deleteValue(
+                expandoValueLocalService.deleteValue(
                         refreshTokenEV.getValueId());
             } catch (PortalException pe) {
                 log.error("The refresh token does not work and cannot be "
@@ -685,7 +686,7 @@ public final class IAMImpl implements IAM {
         AccessTokenResponse successResponse = (AccessTokenResponse) response;
         AccessToken accessToken = successResponse.getTokens().getAccessToken();
         try {
-            ExpandoValueLocalServiceUtil.addValue(user.getCompanyId(),
+            expandoValueLocalService.addValue(user.getCompanyId(),
                     User.class.getName(),
                     ExpandoTableConstants.DEFAULT_TABLE_NAME, "iamAccessToken",
                     user.getUserId(), accessToken.getValue());
@@ -750,6 +751,12 @@ public final class IAMImpl implements IAM {
      */
     @Reference
     private UserGroupLocalService userGroupLocalService;
+
+    /**
+     * Reference to the expando value service.
+     */
+    @Reference
+    private ExpandoValueLocalService expandoValueLocalService;
 
     /**
      * Logger.
