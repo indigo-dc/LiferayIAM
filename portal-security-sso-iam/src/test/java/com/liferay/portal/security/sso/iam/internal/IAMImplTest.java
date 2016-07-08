@@ -24,40 +24,45 @@ package com.liferay.portal.security.sso.iam.internal;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Spy;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.liferay.expando.kernel.model.ExpandoValue;
+import com.liferay.portlet.expando.service.impl.ExpandoValueLocalServiceImpl;
 
 /**
  * @author Marco Fargetta
  */
 @RunWith(MockitoJUnitRunner.class)
 public class IAMImplTest {
-    
-    @Spy
+
+    /**
+     * ExpandoValue mock.
+     */
+    @Mock
+    private ExpandoValueLocalServiceImpl expandoValueLocalService;
+
+    /**
+     * IAMImpl tested object.
+     */
+    @InjectMocks
     private IAMImpl iam;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
 
     /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#addOrUpdateUser(javax.servlet.http.HttpSession, long, java.lang.String, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#addOrUpdateUser(
+     * javax.servlet.http.HttpSession, long, java.lang.String,
+     * java.lang.String, java.util.List)}
+     * .
      */
     @Test
     public void testAddOrUpdateUser() {
@@ -65,25 +70,36 @@ public class IAMImplTest {
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#getLoginRedirect(long, java.lang.String, java.util.List, boolean)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#getLoginRedirect(
+     * long, java.lang.String, java.util.List, boolean)}
+     * .
      */
     @Test
     public void testGetLoginRedirect() {
-        
+
         fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#isEnabled(long)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#isEnabled(long)}
+     * .
      */
     @Test
     public void testIsEnabled() {
-//        doReturn(new IAMConfigurationUtil(true)).when(iam).getIAMConfiguration(anyInt());
+        // doReturn(new
+        // IAMConfigurationUtil(true)).when(iam).getIAMConfiguration(anyInt());
         assertTrue("It should be enabled", iam.isEnabled(1));
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#getUserToken(long)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#getUserToken(long)}
+     * .
      */
     @Test
     public void testGetUserToken() {
@@ -91,15 +107,27 @@ public class IAMImplTest {
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#hasRefreshToken(com.liferay.portal.kernel.model.User)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#hasRefreshToken(
+     * com.liferay.portal.kernel.model.User)}
+     * .
      */
     @Test
     public void testHasRefreshToken() {
-        fail("Not yet implemented"); // TODO
+        ExpandoValue ev = new ExpandoValueMock();
+        ev.setData("ciccio");
+        when(expandoValueLocalService.getValue(anyLong(), anyString(), anyString(), anyString(), anyLong()))
+                .thenReturn(ev);
+        assertTrue(iam.hasRefreshToken(new UserMock()));
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#getTokenUser(long, java.lang.String)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#getTokenUser(
+     * long, java.lang.String)}
+     * .
      */
     @Test
     public void testGetTokenUser() {
@@ -107,7 +135,11 @@ public class IAMImplTest {
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#getTokenSubject(long, java.lang.String)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#getTokenSubject(
+     * long, java.lang.String)}
+     * .
      */
     @Test
     public void testGetTokenSubjectLongString() {
@@ -115,7 +147,11 @@ public class IAMImplTest {
     }
 
     /**
-     * Test method for {@link com.liferay.portal.security.sso.iam.internal.IAMImpl#getTokenSubject(long, long)}.
+     * Test method for
+     * {@link
+     * com.liferay.portal.security.sso.iam.internal.IAMImpl#getTokenSubject(
+     * long, long)}
+     * .
      */
     @Test
     public void testGetTokenSubjectLongLong() {
