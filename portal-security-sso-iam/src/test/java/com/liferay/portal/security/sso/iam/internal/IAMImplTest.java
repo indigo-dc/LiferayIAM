@@ -116,7 +116,7 @@ public class IAMImplTest {
     @Test
     public void testHasRefreshToken() {
         ExpandoValue ev = new ExpandoValueMock();
-        ev.setData("ciccio");
+        ev.setData("aToken");
         when(expandoValueLocalService.getValue(anyLong(), anyString(), anyString(), anyString(), anyLong()))
                 .thenReturn(ev);
         assertTrue(iam.hasRefreshToken(new UserMock()));

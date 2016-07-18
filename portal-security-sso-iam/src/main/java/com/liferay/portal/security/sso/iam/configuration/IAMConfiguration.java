@@ -26,6 +26,7 @@ import aQute.bnd.annotation.metatype.Meta;
 import com.liferay.portal.configuration.metatype.annotations
     .ExtendedObjectClassDefinition;
 
+
 /**
  * @author Marco Fargetta
  */
