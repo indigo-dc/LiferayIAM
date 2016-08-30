@@ -34,3 +34,8 @@ can create a new role and then open the `Define Permissions` dialog which will s
 
 Enabling the permissions for the `model.resource.com.liferay.portal.security.sso.iam`, among the *Resource Permissions*,
 everyone with this role can access the remote methods.
+
+Finally, to make the user subject and token visible to the owner among the account value the custom fields must be enabled. The fields
+to enable are *Iamaccesstoken*, *Iamrefreshtoken* and ￼	*Iamuserid* and thes are available in the menu `Liferay > Control Panel > Custom Fields`
+selecting the *User* resource. To make them visible select the permissions configuration and enable the view to the **User**. Ager the
+users should find these three fields among their custom fields in the account configuration pages.
