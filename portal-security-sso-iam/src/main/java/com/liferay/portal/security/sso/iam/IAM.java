@@ -23,6 +23,7 @@
 package com.liferay.portal.security.sso.iam;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -113,7 +114,7 @@ public interface IAM {
     String getUserToken(long userId) throws Exception;
 
     /**
-     * Retrieves the user information. Identify the user associated with a valid
+     * Retrieves the liferay user. Identify the user associated with a valid
      * access token
      *
      * @param companyId
@@ -125,6 +126,21 @@ public interface IAM {
      *             No user associated with the token
      */
     User getTokenUser(long companyId, String token) throws Exception;
+
+    /**
+     * Retrieve the user information. Contact the user info end-point to get
+     * the user details managed by IAM.
+     *
+     * @param companyId
+     *            Company Id
+     * @param token
+     *            The token
+     * @return A map of user attributes released by IAM
+     * @throws Exception
+     *            Token not valid
+     */
+    Map<String, String> getTokenUserInfo(long companyId, String token)
+            throws Exception;
 
     /**
      * Retrieves the subject associated with the token.

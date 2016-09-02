@@ -56,7 +56,7 @@ import com.liferay.portal.kernel.util.RemotePreference;
  *
  * @author Marco Fargetta
  */
-public class UserMock implements User {
+public final class UserMock implements User {
 
     @Override
     public Object clone() {
@@ -70,7 +70,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPrimaryKey(long primaryKey) {
+    public void setPrimaryKey(final long primaryKey) {
         // TODO Auto-generated method stub
 
     }
@@ -82,7 +82,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setMvccVersion(long mvccVersion) {
+    public void setMvccVersion(final long mvccVersion) {
         // TODO Auto-generated method stub
 
     }
@@ -94,7 +94,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setUuid(String uuid) {
+    public void setUuid(final String uuid) {
         // TODO Auto-generated method stub
 
     }
@@ -106,7 +106,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setUserId(long userId) {
+    public void setUserId(final long userId) {
         // TODO Auto-generated method stub
 
     }
@@ -118,7 +118,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setUserUuid(String userUuid) {
+    public void setUserUuid(final String userUuid) {
         // TODO Auto-generated method stub
 
     }
@@ -130,7 +130,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setCompanyId(long companyId) {
+    public void setCompanyId(final long companyId) {
         // TODO Auto-generated method stub
 
     }
@@ -142,7 +142,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(final Date createDate) {
         // TODO Auto-generated method stub
 
     }
@@ -154,7 +154,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setModifiedDate(Date modifiedDate) {
+    public void setModifiedDate(final Date modifiedDate) {
         // TODO Auto-generated method stub
 
     }
@@ -172,7 +172,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setDefaultUser(boolean defaultUser) {
+    public void setDefaultUser(final boolean defaultUser) {
         // TODO Auto-generated method stub
 
     }
@@ -184,7 +184,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setContactId(long contactId) {
+    public void setContactId(final long contactId) {
         // TODO Auto-generated method stub
 
     }
@@ -196,7 +196,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         // TODO Auto-generated method stub
 
     }
@@ -214,7 +214,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPasswordEncrypted(boolean passwordEncrypted) {
+    public void setPasswordEncrypted(final boolean passwordEncrypted) {
         // TODO Auto-generated method stub
 
     }
@@ -232,7 +232,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPasswordReset(boolean passwordReset) {
+    public void setPasswordReset(final boolean passwordReset) {
         // TODO Auto-generated method stub
 
     }
@@ -244,7 +244,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPasswordModifiedDate(Date passwordModifiedDate) {
+    public void setPasswordModifiedDate(final Date passwordModifiedDate) {
         // TODO Auto-generated method stub
 
     }
@@ -256,7 +256,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setDigest(String digest) {
+    public void setDigest(final String digest) {
         // TODO Auto-generated method stub
 
     }
@@ -268,7 +268,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setReminderQueryQuestion(String reminderQueryQuestion) {
+    public void setReminderQueryQuestion(final String reminderQueryQuestion) {
         // TODO Auto-generated method stub
 
     }
@@ -280,7 +280,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setReminderQueryAnswer(String reminderQueryAnswer) {
+    public void setReminderQueryAnswer(final String reminderQueryAnswer) {
         // TODO Auto-generated method stub
 
     }
@@ -292,7 +292,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setGraceLoginCount(int graceLoginCount) {
+    public void setGraceLoginCount(final int graceLoginCount) {
         // TODO Auto-generated method stub
 
     }
@@ -304,7 +304,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setScreenName(String screenName) {
+    public void setScreenName(final String screenName) {
         // TODO Auto-generated method stub
 
     }
@@ -316,7 +316,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setEmailAddress(String emailAddress) {
+    public void setEmailAddress(final String emailAddress) {
         // TODO Auto-generated method stub
 
     }
@@ -328,7 +328,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setFacebookId(long facebookId) {
+    public void setFacebookId(final long facebookId) {
         // TODO Auto-generated method stub
 
     }
@@ -340,7 +340,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setGoogleUserId(String googleUserId) {
+    public void setGoogleUserId(final String googleUserId) {
         // TODO Auto-generated method stub
 
     }
@@ -352,7 +352,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLdapServerId(long ldapServerId) {
+    public void setLdapServerId(final long ldapServerId) {
         // TODO Auto-generated method stub
 
     }
@@ -364,7 +364,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setOpenId(String openId) {
+    public void setOpenId(final String openId) {
         // TODO Auto-generated method stub
 
     }
@@ -376,7 +376,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPortraitId(long portraitId) {
+    public void setPortraitId(final long portraitId) {
         // TODO Auto-generated method stub
 
     }
@@ -388,7 +388,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLanguageId(String languageId) {
+    public void setLanguageId(final String languageId) {
         // TODO Auto-generated method stub
 
     }
@@ -400,7 +400,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setTimeZoneId(String timeZoneId) {
+    public void setTimeZoneId(final String timeZoneId) {
         // TODO Auto-generated method stub
 
     }
@@ -412,7 +412,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setGreeting(String greeting) {
+    public void setGreeting(final String greeting) {
         // TODO Auto-generated method stub
 
     }
@@ -424,7 +424,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setComments(String comments) {
+    public void setComments(final String comments) {
         // TODO Auto-generated method stub
 
     }
@@ -436,7 +436,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setFirstName(String firstName) {
+    public void setFirstName(final String firstName) {
         // TODO Auto-generated method stub
 
     }
@@ -448,7 +448,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setMiddleName(String middleName) {
+    public void setMiddleName(final String middleName) {
         // TODO Auto-generated method stub
 
     }
@@ -460,7 +460,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLastName(String lastName) {
+    public void setLastName(final String lastName) {
         // TODO Auto-generated method stub
 
     }
@@ -472,7 +472,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setJobTitle(String jobTitle) {
+    public void setJobTitle(final String jobTitle) {
         // TODO Auto-generated method stub
 
     }
@@ -484,7 +484,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLoginDate(Date loginDate) {
+    public void setLoginDate(final Date loginDate) {
         // TODO Auto-generated method stub
 
     }
@@ -496,7 +496,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLoginIP(String loginIP) {
+    public void setLoginIP(final String loginIP) {
         // TODO Auto-generated method stub
 
     }
@@ -508,7 +508,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLastLoginDate(Date lastLoginDate) {
+    public void setLastLoginDate(final Date lastLoginDate) {
         // TODO Auto-generated method stub
 
     }
@@ -520,7 +520,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLastLoginIP(String lastLoginIP) {
+    public void setLastLoginIP(final String lastLoginIP) {
         // TODO Auto-generated method stub
 
     }
@@ -532,7 +532,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLastFailedLoginDate(Date lastFailedLoginDate) {
+    public void setLastFailedLoginDate(final Date lastFailedLoginDate) {
         // TODO Auto-generated method stub
 
     }
@@ -544,7 +544,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setFailedLoginAttempts(int failedLoginAttempts) {
+    public void setFailedLoginAttempts(final int failedLoginAttempts) {
         // TODO Auto-generated method stub
 
     }
@@ -562,7 +562,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLockout(boolean lockout) {
+    public void setLockout(final boolean lockout) {
         // TODO Auto-generated method stub
 
     }
@@ -574,7 +574,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setLockoutDate(Date lockoutDate) {
+    public void setLockoutDate(final Date lockoutDate) {
         // TODO Auto-generated method stub
 
     }
@@ -592,7 +592,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setAgreedToTermsOfUse(boolean agreedToTermsOfUse) {
+    public void setAgreedToTermsOfUse(final boolean agreedToTermsOfUse) {
         // TODO Auto-generated method stub
 
     }
@@ -610,7 +610,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setEmailAddressVerified(boolean emailAddressVerified) {
+    public void setEmailAddressVerified(final boolean emailAddressVerified) {
         // TODO Auto-generated method stub
 
     }
@@ -622,7 +622,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setStatus(int status) {
+    public void setStatus(final int status) {
         // TODO Auto-generated method stub
 
     }
@@ -634,7 +634,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setNew(boolean n) {
+    public void setNew(final boolean n) {
         // TODO Auto-generated method stub
 
     }
@@ -646,7 +646,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setCachedModel(boolean cachedModel) {
+    public void setCachedModel(final boolean cachedModel) {
         // TODO Auto-generated method stub
 
     }
@@ -664,7 +664,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+    public void setPrimaryKeyObj(final Serializable primaryKeyObj) {
         // TODO Auto-generated method stub
 
     }
@@ -676,25 +676,26 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setExpandoBridgeAttributes(BaseModel<?> baseModel) {
+    public void setExpandoBridgeAttributes(final BaseModel<?> baseModel) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+    public void setExpandoBridgeAttributes(final ExpandoBridge expandoBridge) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+    public void setExpandoBridgeAttributes(
+            final ServiceContext serviceContext) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public int compareTo(User user) {
+    public int compareTo(final User user) {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -748,7 +749,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setModelAttributes(Map<String, Object> attributes) {
+    public void setModelAttributes(final Map<String, Object> attributes) {
         // TODO Auto-generated method stub
 
     }
@@ -778,7 +779,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public void addRemotePreference(RemotePreference remotePreference) {
+    public void addRemotePreference(final RemotePreference remotePreference) {
         // TODO Auto-generated method stub
 
     }
@@ -814,7 +815,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public String getDigest(String password) {
+    public String getDigest(final String password) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -826,25 +827,31 @@ public class UserMock implements User {
     }
 
     @Override
-    public String getDisplayURL(String portalURL, String mainPath) throws PortalException {
+    public String getDisplayURL(final String portalURL, final String mainPath)
+            throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getDisplayURL(String portalURL, String mainPath, boolean privateLayout) throws PortalException {
+    public String getDisplayURL(
+            final String portalURL, final String mainPath,
+            final boolean privateLayout) throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getDisplayURL(ThemeDisplay themeDisplay) throws PortalException {
+    public String getDisplayURL(final ThemeDisplay themeDisplay)
+            throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getDisplayURL(ThemeDisplay themeDisplay, boolean privateLayout) throws PortalException {
+    public String getDisplayURL(
+            final ThemeDisplay themeDisplay, final boolean privateLayout)
+                    throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -868,7 +875,8 @@ public class UserMock implements User {
     }
 
     @Override
-    public String getFullName(boolean usePrefix, boolean useSuffix) {
+    public String getFullName(
+            final boolean usePrefix, final boolean useSuffix) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -928,13 +936,14 @@ public class UserMock implements User {
     }
 
     @Override
-    public List<Group> getMySiteGroups(int max) throws PortalException {
+    public List<Group> getMySiteGroups(final int max) throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<Group> getMySiteGroups(String[] classNames, int max) throws PortalException {
+    public List<Group> getMySiteGroups(
+            final String[] classNames, final int max) throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -946,7 +955,8 @@ public class UserMock implements User {
     }
 
     @Override
-    public long[] getOrganizationIds(boolean includeAdministrative) throws PortalException {
+    public long[] getOrganizationIds(final boolean includeAdministrative)
+            throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -958,7 +968,8 @@ public class UserMock implements User {
     }
 
     @Override
-    public List<Organization> getOrganizations(boolean includeAdministrative) throws PortalException {
+    public List<Organization> getOrganizations(
+            final boolean includeAdministrative) throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -994,7 +1005,8 @@ public class UserMock implements User {
     }
 
     @Override
-    public String getPortraitURL(ThemeDisplay themeDisplay) throws PortalException {
+    public String getPortraitURL(final ThemeDisplay themeDisplay)
+            throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -1018,7 +1030,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public RemotePreference getRemotePreference(String name) {
+    public RemotePreference getRemotePreference(final String name) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -1048,7 +1060,8 @@ public class UserMock implements User {
     }
 
     @Override
-    public List<Group> getSiteGroups(boolean includeAdministrative) throws PortalException {
+    public List<Group> getSiteGroups(final boolean includeAdministrative)
+            throws PortalException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -1078,7 +1091,7 @@ public class UserMock implements User {
     }
 
     @Override
-    public Date getUnlockDate(PasswordPolicy passwordPolicy) {
+    public Date getUnlockDate(final PasswordPolicy passwordPolicy) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -1108,7 +1121,8 @@ public class UserMock implements User {
     }
 
     @Override
-    public boolean hasCompanyMx(String emailAddress) throws PortalException {
+    public boolean hasCompanyMx(final String emailAddress)
+            throws PortalException {
         // TODO Auto-generated method stub
         return false;
     }
@@ -1198,13 +1212,13 @@ public class UserMock implements User {
     }
 
     @Override
-    public void setPasswordModified(boolean passwordModified) {
+    public void setPasswordModified(final boolean passwordModified) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void setPasswordUnencrypted(String passwordUnencrypted) {
+    public void setPasswordUnencrypted(final String passwordUnencrypted) {
         // TODO Auto-generated method stub
 
     }

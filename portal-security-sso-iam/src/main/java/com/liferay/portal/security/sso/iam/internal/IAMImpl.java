@@ -28,13 +28,16 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -312,6 +315,50 @@ public class IAMImpl implements IAM {
         return null;
     }
 
+    @Override
+    public final Map<String, String> getTokenUserInfo(
+            final long companyId, final String token) throws Exception {
+        log.debug("User information retrieved from IAM");
+        IAMEndPoints iamEP = new IAMEndPoints(getIAMConfiguration(companyId));
+        UserInfoRequest userInfoReq = new UserInfoRequest(iamEP.getUserInfo(),
+                new BearerAccessToken(token));
+        HTTPResponse userInfoHTTPResp = null;
+        try {
+            userInfoHTTPResp = userInfoReq.toHTTPRequest().send();
+        } catch (SerializeException ex) {
+            log.error(ex);
+        } catch (IOException ex) {
+            log.error(ex);
+        }
+        UserInfoResponse userInfoResp = null;
+        try {
+            userInfoResp = UserInfoResponse.parse(userInfoHTTPResp);
+        } catch (ParseException ex) {
+            log.error(ex);
+        }
+
+        if (userInfoResp == null
+                || userInfoResp instanceof UserInfoErrorResponse) {
+            throw new AuthException(
+                    "OpenId Connect server does not authenticate");
+        }
+        UserInfoSuccessResponse successUserResponse =
+                (UserInfoSuccessResponse) userInfoResp;
+        UserInfo uInfo = successUserResponse.getUserInfo();
+        JSONArray groups = (JSONArray) uInfo.getClaim("groups");
+        List<String> lstGroups = new LinkedList<>();
+        for (int i = 0; i < groups.size(); i++) {
+            JSONObject gr = (JSONObject) groups.get(i);
+            lstGroups.add(gr.get("name").toString());
+        }
+
+        Map<String, String> finalInfo = new HashMap<>();
+        finalInfo.put("groups", StringUtils.join(lstGroups, ","));
+        finalInfo.put("subject", uInfo.getSubject().getValue());
+        return finalInfo;
+    }
+
+
     /**
      * @see com.liferay.portal.security.sso.iam.IAM#getTokenSubject(long,
      *      java.lang.String)
@@ -524,10 +571,9 @@ public class IAMImpl implements IAM {
         if (Validator.isNull(listGroups)) {
             return null;
         }
-        JSONArray groups = (JSONArray) listGroups;
         List<Long> groupIds = new LinkedList<>();
-        for (int i = 0; i < groups.size(); i++) {
-            JSONObject gr = (JSONObject) groups.get(i);
+        for (int i = 0; i < listGroups.size(); i++) {
+            JSONObject gr = (JSONObject) listGroups.get(i);
             String groupName = IAMConfigurationKeys.GROUP_PREFIX + gr.get(
                     "name").toString();
 
