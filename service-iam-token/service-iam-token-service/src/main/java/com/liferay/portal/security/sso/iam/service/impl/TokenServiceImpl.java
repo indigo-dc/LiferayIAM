@@ -23,7 +23,9 @@
 package com.liferay.portal.security.sso.iam.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
@@ -143,6 +145,10 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
                 ti.setGroups(ugList);
                 return ti;
             }
+            Map<String, String> userInfo = iam.getTokenUserInfo(
+                    serviceContext.getCompanyId(), token);
+            ti.setSubject(userInfo.get("subject"));
+            ti.setGroups(Arrays.asList(userInfo.get("groups").split(",")));
             ti.setError("No user associated with the token");
             return ti;
         } catch (Exception e) {
