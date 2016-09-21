@@ -572,10 +572,9 @@ public class IAMImpl implements IAM {
             return null;
         }
         List<Long> groupIds = new LinkedList<>();
-        for (int i = 0; i < listGroups.size(); i++) {
-            JSONObject gr = (JSONObject) listGroups.get(i);
-            String groupName = IAMConfigurationKeys.GROUP_PREFIX + gr.get(
-                    "name").toString();
+        for (Object gr: listGroups) {
+            String groupName = IAMConfigurationKeys.GROUP_PREFIX
+                    + gr.toString();
 
             UserGroup lifeUG = null;
             ServiceContext serviceContext = new ServiceContext();
