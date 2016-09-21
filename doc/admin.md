@@ -46,11 +46,11 @@ users should find these three fields among their custom fields in the account co
 To upgrade to a new release of LiferayIAM it is enough to install the new module following the same procedure of the installation.
 However, all previous configurations will remain untouched and applied to the new version.
 
-> the previous.
-> A [bug](https://issues.liferay.com/browse/LPS-68275) has been reported in Liferay. Therefore, before to update it is better to remove the
-> previous version and this requires two steps:
+> **NOTE:** in some Liferay versions upgraed modules are not removed but they will remain actives side by side with the new version.
+> A [bug](https://issues.liferay.com/browse/LPS-68275) has been reported in Liferay for the tested version. Therefore, before to
+> upgrade it is better to remove the previous version of LiferayIAM modules. This requires two steps:
 >
-> * Access the `App Manager`, search for IAM and remove the five related modules.
+> * Access the `App Manager`, search for `iam` and remove the five related modules.
 > * Stop Liferay, remove the corresponding jar files from the `osgi/modules` folder in your installation and restart Liferay.
 >
 > The modules should not be present anymore but the configuration is still stored so after the installation of the new modules the authentication
