@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.security.sso.iam.IAM;
 import com.liferay.portal.security.sso.iam.constants.IAMConfigurationKeys;
 import com.liferay.portal.security.sso.iam.exception.NoAccessTokenAvailable;
-import com.liferay.portal.security.sso.iam.exception.NoSuchTokenException;
 import com.liferay.portal.security.sso.iam.model.TokenInfo;
 import com.liferay.portal.security.sso.iam.service.base.TokenServiceBaseImpl;
 import com.liferay.portal.security.sso.iam.service.permission.
@@ -143,18 +142,16 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
                     }
                 }
                 ti.setGroups(ugList);
-                return ti;
+            } else {
+                Map<String, String> userInfo = iam.getTokenUserInfo(
+                        serviceContext.getCompanyId(), token);
+                ti.setSubject(userInfo.get("subject"));
+                ti.setGroups(Arrays.asList(userInfo.get("groups").split(",")));
             }
-            Map<String, String> userInfo = iam.getTokenUserInfo(
-                    serviceContext.getCompanyId(), token);
-            ti.setSubject(userInfo.get("subject"));
-            ti.setGroups(Arrays.asList(userInfo.get("groups").split(",")));
-            ti.setError("No user associated with the token");
-            return ti;
         } catch (Exception e) {
-            throw new NoSuchTokenException("Token '" + token
-                    + "' is not valid");
+            ti.setError("Token '" + token + "' is not valid");
         }
+        return ti;
     }
 
     /**
