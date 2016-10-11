@@ -167,4 +167,15 @@ public interface IAM {
      *             User has not subject
      */
     String getTokenSubject(long companyId, long userId) throws Exception;
+
+    /**
+     * Retrieves the user by the subject.
+     *
+     * @param companyId
+     *            Company Id
+     * @param subject User subject
+     * @return The user or null if not available
+     * @throws Exception If users cannot be verified
+     */
+    User getUserBySubject(long companyId, String subject) throws Exception;
 }

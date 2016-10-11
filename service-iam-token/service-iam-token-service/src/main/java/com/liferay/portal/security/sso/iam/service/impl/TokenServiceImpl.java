@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.security.sso.iam.IAM;
 import com.liferay.portal.security.sso.iam.constants.IAMConfigurationKeys;
-import com.liferay.portal.security.sso.iam.exception.NoAccessTokenAvailable;
 import com.liferay.portal.security.sso.iam.model.TokenInfo;
 import com.liferay.portal.security.sso.iam.service.base.TokenServiceBaseImpl;
 import com.liferay.portal.security.sso.iam.service.permission.
@@ -72,43 +71,78 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
      */
 
     /**
+     * Retrieves the token for the calling user.
+     *
+     * @param serviceContext The service context of the call
+     * @return The token info containing the token
+     * @throws PortalException If there are problem to collect the information
+     */
+    public final TokenInfo getToken(final ServiceContext serviceContext)
+            throws PortalException {
+        TokenAccessPermissionChecker.check(getPermissionChecker(), getUserId(),
+                serviceContext.getScopeGroupId(), "VIEW");
+        TokenInfo ti = new TokenInfo();
+        try {
+            ti.setToken(iam.getUserToken(getUserId()));
+            ti.setSubject(iam.getTokenSubject(
+                    serviceContext.getCompanyId(), getUserId()));
+        } catch (Exception e) {
+            ti.setError("User wiht id '" + getUserId()
+                    + "' has not access token");
+        }
+        return ti;
+    }
+
+    /**
      * Retrieves the token for the user.
      *
      * @param userId The user identifier
      * @param serviceContext The service context of the call
-     * @return The token
+     * @return The token info containing the token
      * @throws PortalException If there are problem to collect the information
      */
-    public final String getToken(
+    public final TokenInfo getToken(
             final long userId, final ServiceContext serviceContext)
             throws PortalException {
         TokenAccessPermissionChecker.check(getPermissionChecker(), userId,
                 serviceContext.getScopeGroupId(), "VIEW");
+        TokenInfo ti = new TokenInfo();
         try {
-            return iam.getUserToken(userId);
+            ti.setToken(iam.getUserToken(userId));
+            ti.setSubject(iam.getTokenSubject(
+                    serviceContext.getCompanyId(), userId));
         } catch (Exception e) {
-            throw new NoAccessTokenAvailable("User " + userId
-                    + " has not access token");
+            ti.setError("User with id '" + userId
+                    + "' has not access token");
         }
+        return ti;
     }
 
     /**
-     * Retrieves the token for the calling user.
+     * Retrieves the token for the provided subject.
      *
+     * @param subject The global user identifier from IAM
      * @param serviceContext The service context of the call
-     * @return The token
+     * @return The token info containing the token
      * @throws PortalException If there are problem to collect the information
      */
-    public final String getToken(final ServiceContext serviceContext)
+    public final TokenInfo getToken(
+            final String subject, final ServiceContext serviceContext)
             throws PortalException {
-        TokenAccessPermissionChecker.check(getPermissionChecker(), getUserId(),
-                serviceContext.getScopeGroupId(), "VIEW");
+        TokenInfo ti = new TokenInfo();
+        ti.setSubject(subject);
         try {
-            return iam.getUserToken(getUserId());
+            User user = iam.getUserBySubject(
+                    serviceContext.getCompanyId(), subject);
+            TokenAccessPermissionChecker.check(
+                    getPermissionChecker(), user.getUserId(),
+                    serviceContext.getScopeGroupId(), "VIEW");
+            ti.setToken(iam.getUserToken(user.getUserId()));
         } catch (Exception e) {
-            throw new NoAccessTokenAvailable("User " + getUserId()
-                    + " has not access token");
+            ti.setError("User with subject '" + subject
+                    + "' has not access token");
         }
+        return ti;
     }
 
     /**
@@ -127,6 +161,7 @@ public class TokenServiceImpl extends TokenServiceBaseImpl {
         TokenAccessPermissionChecker.check(getPermissionChecker(), getUserId(),
                 serviceContext.getScopeGroupId(), "TOKEN_INFO");
         TokenInfo ti = new TokenInfo();
+        ti.setToken(token);
         try {
             User user = iam.getTokenUser(serviceContext.getCompanyId(), token);
             if (user != null) {

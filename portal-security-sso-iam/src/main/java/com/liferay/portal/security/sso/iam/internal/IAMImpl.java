@@ -389,6 +389,37 @@ public class IAMImpl implements IAM {
     }
 
     /**
+     * @see com.liferay.portal.security.sso.iam.IAM#getUserBySubject(String)
+     */
+    @Override
+    public final User getUserBySubject(
+            final long companyId, final String subject) throws Exception {
+        ExpandoColumn column = ExpandoColumnLocalServiceUtil
+                .getDefaultTableColumn(companyId, User.class.getName(),
+                        "iamUserID");
+        DynamicQuery userDynamicQuery = DynamicQueryFactoryUtil.forClass(
+                ExpandoValue.class, PortalClassLoaderUtil.getClassLoader())
+                .add(PropertyFactoryUtil.forName("columnId").eq(GetterUtil
+                        .getLong(column.getColumnId()))).add(
+                                PropertyFactoryUtil.forName("data").eq(subject))
+                .add(PropertyFactoryUtil.forName("classNameId").eq(GetterUtil
+                        .getLong(ClassNameLocalServiceUtil.getClassNameId(
+                                User.class.getName()))));
+        List<ExpandoValue> expandoList = expandoValueLocalService
+                .dynamicQuery(userDynamicQuery);
+
+        if (expandoList.size() == 1) {
+            long userId = expandoList.get(0).getClassPK();
+            return UserLocalServiceUtil.getUserById(userId);
+        }
+        if (expandoList.size() > 1) {
+            log.error("Subject '" + subject + "' associated to multiple users");
+            throw new Exception("Subject associated to multiple users.");
+        }
+        return null;
+    }
+
+    /**
      * Retrieves the configuration of the IAM endpoint.
      *
      * @param companyId The portal company id

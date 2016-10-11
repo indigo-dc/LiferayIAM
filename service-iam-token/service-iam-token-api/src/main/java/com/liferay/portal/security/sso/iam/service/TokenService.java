@@ -52,6 +52,52 @@ public interface TokenService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link TokenServiceUtil} to access the token remote service. Add custom service methods to {@link com.liferay.portal.security.sso.iam.service.impl.TokenServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+
+	/**
+	* Retrieves the token for the calling user.
+	*
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public TokenInfo getToken(ServiceContext serviceContext)
+		throws PortalException;
+
+	/**
+	* Retrieves the token for the provided subject.
+	*
+	* @param subject The global user identifier from IAM
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public TokenInfo getToken(java.lang.String subject,
+		ServiceContext serviceContext) throws PortalException;
+
+	/**
+	* Retrieves the token for the user.
+	*
+	* @param userId The user identifier
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public TokenInfo getToken(long userId, ServiceContext serviceContext)
+		throws PortalException;
+
+	/**
+	* Retrieves the information associated with a token.
+	* If the token is not valid an error message is included in the token
+	* information and not other values are provided
+	*
+	* @param token The token to analyse
+	* @param serviceContext The service context of the call
+	* @return The token information
+	* @throws PortalException If there are problem to collect the information
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public TokenInfo getTokenInfo(java.lang.String token,
 		ServiceContext serviceContext) throws PortalException;
@@ -62,12 +108,4 @@ public interface TokenService extends BaseService {
 	* @return the OSGi service identifier
 	*/
 	public java.lang.String getOSGiServiceIdentifier();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getToken(ServiceContext serviceContext)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getToken(long userId, ServiceContext serviceContext)
-		throws PortalException;
 }

@@ -41,6 +41,60 @@ public class TokenServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.security.sso.iam.service.impl.TokenServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+
+	/**
+	* Retrieves the token for the calling user.
+	*
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getToken(
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getToken(serviceContext);
+	}
+
+	/**
+	* Retrieves the token for the provided subject.
+	*
+	* @param subject The global user identifier from IAM
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getToken(
+		java.lang.String subject,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getToken(subject, serviceContext);
+	}
+
+	/**
+	* Retrieves the token for the user.
+	*
+	* @param userId The user identifier
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getToken(
+		long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getToken(userId, serviceContext);
+	}
+
+	/**
+	* Retrieves the information associated with a token.
+	* If the token is not valid an error message is included in the token
+	* information and not other values are provided
+	*
+	* @param token The token to analyse
+	* @param serviceContext The service context of the call
+	* @return The token information
+	* @throws PortalException If there are problem to collect the information
+	*/
 	public static com.liferay.portal.security.sso.iam.model.TokenInfo getTokenInfo(
 		java.lang.String token,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -55,18 +109,6 @@ public class TokenServiceUtil {
 	*/
 	public static java.lang.String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
-	}
-
-	public static java.lang.String getToken(
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getToken(serviceContext);
-	}
-
-	public static java.lang.String getToken(long userId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getToken(userId, serviceContext);
 	}
 
 	public static TokenService getService() {
