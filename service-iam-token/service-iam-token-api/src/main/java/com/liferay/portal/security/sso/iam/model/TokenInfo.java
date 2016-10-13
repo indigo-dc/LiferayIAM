@@ -25,7 +25,6 @@ package com.liferay.portal.security.sso.iam.model;
 import java.util.List;
 
 import com.liferay.portal.kernel.json.JSON;
-
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -39,7 +38,7 @@ import aQute.bnd.annotation.ProviderType;
 public class TokenInfo {
 
     /**
-     * Retrieves the error message is a problem arise for the service.
+     * Retrieves the error message if a problem arise for the service.
      *
      * @return The error
      */
@@ -54,6 +53,24 @@ public class TokenInfo {
      */
     public final void setError(final String errorMsg) {
         this.error = errorMsg;
+    }
+
+    /**
+     * Retrieves the user token.
+     *
+     * @return The token
+     */
+    public final String getToken() {
+        return token;
+    }
+
+    /**
+     * Sets the user token.
+     *
+     * @param aToken The token to set
+     */
+    public final void setToken(final String aToken) {
+        this.token = aToken;
     }
 
     /**
@@ -102,6 +119,11 @@ public class TokenInfo {
      * The user subject.
      */
     private String subject;
+
+    /**
+     * The user token.
+     */
+    private String token;
 
     /**
      * The user groups.

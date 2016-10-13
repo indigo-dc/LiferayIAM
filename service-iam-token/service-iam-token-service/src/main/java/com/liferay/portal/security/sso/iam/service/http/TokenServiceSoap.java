@@ -64,11 +64,42 @@ import java.rmi.RemoteException;
  */
 @ProviderType
 public class TokenServiceSoap {
-	public static java.lang.String getToken(long userId,
+	/**
+	* Retrieves the token for the calling user.
+	*
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getToken(
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			java.lang.String returnValue = TokenServiceUtil.getToken(userId,
+			com.liferay.portal.security.sso.iam.model.TokenInfo returnValue = TokenServiceUtil.getToken(serviceContext);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* Retrieves the token for the user.
+	*
+	* @param userId The user identifier
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getToken(
+		long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.portal.security.sso.iam.model.TokenInfo returnValue = TokenServiceUtil.getToken(userId,
 					serviceContext);
 
 			return returnValue;
@@ -80,11 +111,21 @@ public class TokenServiceSoap {
 		}
 	}
 
-	public static java.lang.String getToken(
+	/**
+	* Retrieves the token for the provided subject.
+	*
+	* @param subject The global user identifier from IAM
+	* @param serviceContext The service context of the call
+	* @return The token info containing the token
+	* @throws PortalException If there are problem to collect the information
+	*/
+	public static com.liferay.portal.security.sso.iam.model.TokenInfo getToken(
+		java.lang.String subject,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			java.lang.String returnValue = TokenServiceUtil.getToken(serviceContext);
+			com.liferay.portal.security.sso.iam.model.TokenInfo returnValue = TokenServiceUtil.getToken(subject,
+					serviceContext);
 
 			return returnValue;
 		}
@@ -95,6 +136,16 @@ public class TokenServiceSoap {
 		}
 	}
 
+	/**
+	* Retrieves the information associated with a token.
+	* If the token is not valid an error message is included in the token
+	* information and not other values are provided
+	*
+	* @param token The token to analyse
+	* @param serviceContext The service context of the call
+	* @return The token information
+	* @throws PortalException If there are problem to collect the information
+	*/
 	public static com.liferay.portal.security.sso.iam.model.TokenInfo getTokenInfo(
 		java.lang.String token,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
