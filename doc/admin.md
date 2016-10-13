@@ -17,6 +17,12 @@ shows the configuration made with the IAM-Test instance:
 To work with the test configuration it is enough to provide the application identifiers (id and secret) and
 the URL of the well known OpenId Connect configuration. For the IAM test the URL is:
 [https://iam-test.indigo-datacloud.eu/.well-known/openid-configuration](https://iam-test.indigo-datacloud.eu/.well-known/openid-configuration)
+In order to get the identifiers the application has to be registered and this requires to specify the return URL after the
+authentication. This has the following format:
+
+```
+http(s)://<your_domain_name>/c/portal/iam_openidconnect
+``` 
 
 Administrator can require some extra scopes for the token. The default configuration requires only the scopes for the user
 identification as requested by Liferay (name, mail and other attributes) and the refresh token.
