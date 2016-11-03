@@ -1,5 +1,5 @@
 ---
-description: This section describe how to deploy and configure the plugins to allow the authentication using IAM.
+description: This section describes how to deploy and configure the plugins to allow the authentication using IAM.
 ---
 
 # Administration Guide
@@ -22,7 +22,7 @@ authentication. This has the following format:
 
 ```
 http(s)://<your_domain_name>/c/portal/iam_openidconnect
-``` 
+```
 
 Administrator can require some extra scopes for the token. The default configuration requires only the scopes for the user
 identification as requested by Liferay (name, mail and other attributes) and the refresh token.
