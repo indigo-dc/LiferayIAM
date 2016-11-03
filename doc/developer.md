@@ -1,5 +1,5 @@
 ---
-description: This section describe the new elements introduced by the plugins which a developer can use to interact with IAM related elements, which mainly are the tokens.
+description: This section describes the new elements introduced by the plugins which a developer can use to interact with IAM related elements, which mainly are the tokens.
 ---
 
 # Developer Guide

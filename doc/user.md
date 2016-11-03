@@ -1,5 +1,5 @@
 ---
-description: This section describe the element added to Liferay User Interface from the point of view of the user.
+description: This section describes the element added to Liferay User Interface from the point of view of the user.
 ---
 
 # User Guide
