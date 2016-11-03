@@ -39,7 +39,7 @@ description: This section provides the "Service Reference Card".
    * User can be managed using the Liferay control panel
 
 **Location of reference documentation:**
-   [LiferayIAM on Gitbook][https://www.gitbook.com/book/indigo-dc/liferay-iam-connector/details]
+   [LiferayIAM on Gitbook](https://www.gitbook.com/book/indigo-dc/liferay-iam-connector/details)
 
 
 [life]: http://www.liferay.com
