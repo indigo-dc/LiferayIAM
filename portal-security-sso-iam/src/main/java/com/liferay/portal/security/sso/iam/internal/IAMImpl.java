@@ -120,9 +120,6 @@ import com.nimbusds.openid.connect.sdk.UserInfoSuccessResponse;
 import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-
 /**
  * Implementation of IAM method.
  *
@@ -345,13 +342,7 @@ public class IAMImpl implements IAM {
         UserInfoSuccessResponse successUserResponse =
                 (UserInfoSuccessResponse) userInfoResp;
         UserInfo uInfo = successUserResponse.getUserInfo();
-        JSONArray groups = (JSONArray) uInfo.getClaim("groups");
-        List<String> lstGroups = new LinkedList<>();
-        for (int i = 0; i < groups.size(); i++) {
-            JSONObject gr = (JSONObject) groups.get(i);
-            lstGroups.add(gr.get("name").toString());
-        }
-
+        List<String> lstGroups = uInfo.getStringListClaim("groups");
         Map<String, String> finalInfo = new HashMap<>();
         finalInfo.put("groups", StringUtils.join(lstGroups, ","));
         finalInfo.put("subject", uInfo.getSubject().getValue());
@@ -514,7 +505,7 @@ public class IAMImpl implements IAM {
         long[] organizationIds = null;
         long[] roleIds = null;
         long[] userGroupIds = getUserGroupIds(companyId,
-                (JSONArray) userInfo.getClaim("groups"));
+                userInfo.getStringListClaim("groups"));
         boolean sendEmail = true;
 
         Calendar birth = new GregorianCalendar();
@@ -598,14 +589,14 @@ public class IAMImpl implements IAM {
      * @return An array of group ids
      */
     private long[] getUserGroupIds(final long companyId,
-            final JSONArray listGroups) {
-        if (Validator.isNull(listGroups)) {
+            final List<String> listGroups) {
+        if (Validator.isNull(listGroups) || listGroups.isEmpty()) {
             return null;
         }
         List<Long> groupIds = new LinkedList<>();
-        for (Object gr: listGroups) {
+        for (String gr: listGroups) {
             String groupName = IAMConfigurationKeys.GROUP_PREFIX
-                    + gr.toString();
+                    + gr;
 
             UserGroup lifeUG = null;
             ServiceContext serviceContext = new ServiceContext();
@@ -683,7 +674,7 @@ public class IAMImpl implements IAM {
         long[] roleIds = null;
         List<UserGroupRole> userGroupRoles = null;
         long[] userGroupIds = getUserGroupIds(companyId,
-                (JSONArray) userInfo.getClaim("groups"));
+                userInfo.getStringListClaim("groups"));
         ServiceContext serviceContext = new ServiceContext();
 
         if (!StringUtil.equalsIgnoreCase(emailAddress, user
